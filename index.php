@@ -16,7 +16,7 @@ session_start();
 if (isset($_SESSION['memberID'])) {
 	try
 	{
-		$stmt = $pdo->prepare('SELECT tasktext, checkbox, tabid, tabname 
+		$stmt = $pdo->prepare('SELECT tasktext, checkbox, tabid, tabname, refreshtime 
 		FROM tasks 
 		INNER JOIN tabs ON tabid = tabnumber
 		WHERE tasks.userid = :userid
@@ -37,7 +37,8 @@ if (isset($_SESSION['memberID'])) {
 		  'tasktext' => $row['tasktext'],
 		  'checkbox' => $row['checkbox'],
 		  'tabid' => $row['tabid'],
-		  'tabname' => $row['tabname']
+		  'tabname' => $row['tabname'],
+		  'refreshtime' => $row['refreshtime']
 		);
 	}
 }
@@ -149,16 +150,24 @@ if (isset($_SESSION['memberID'])) {
 										<li <?php if ($j == $currentElmt) {echo 'class="firstLine"';}?>>
 							    			<textarea class="form-control" spellcheck="false" cols="50" rows="1" name="Task[<?php echo $tasks[$j]['tabid'];?>][]"><?php echo htmlspecialchars($tasks[$j]['tasktext'], ENT_QUOTES, 'UTF-8'); ?></textarea>
 							    			<input type='hidden' value='0' name='checkbox[<?php echo $tasks[$j]['tabid'];?>][]'>
-							    			<input type="checkbox" value="1" name="checkbox[<?php echo $tasks[$j]['tabid'];?>][]" <?php if ($tasks[$j]['checkbox'] == 1) {echo 'checked="checked"';}?>>
+							    			<input type="checkbox" value="1" name="checkbox[<?php echo $tasks[$j]['tabid'];?>][]" <?php if ($tasks[$j]['checkbox'] == 1 && time() < $tasks[$currentElmt]['refreshtime']) {echo 'checked="checked"';}?>>
 							    			<a href="#" class="close nodrag">&times;</a>
 							    		</li>
 							<?php $j++;
 								endwhile;
 							endfor;
 							echo "</ol>";
-							echo '<a href="#" class="btn btn-success addTask nodrag">New task</a>';
-							echo '</div>';
-						endif;
+							echo '<a href="#" class="btn btn-success addTask nodrag">New task</a>';?>
+							<div class="input-group-sm">
+					    		<label for="daily[<?php echo $tasks[$currentElmt]['tabid'];?>]" style="cursor: pointer">Refresh daily:</label>
+								<input class="refresh" type="checkbox" name="daily[<?php echo $tasks[$currentElmt]['tabid'];?>]" id="daily[<?php echo $tasks[$currentElmt]['tabid'];?>]" style="margin: 0 8px"
+								<?php if ($tasks[$currentElmt]['refreshtime'] != NULL) {echo 'checked="checked"';}?>>
+								<input type="time" class="form-control" name="time[<?php echo $tasks[$currentElmt]['tabid'];?>]" <?php if ($tasks[$currentElmt]['refreshtime'] == NULL) {
+									echo 'value="03:00" disabled="disabled" style="width: auto;opacity: .3"';
+								} else {echo 'value="' . date("h:i", $tasks[$currentElmt]['refreshtime']) . '" style="width: auto;opacity: 1"';} ?>>
+					    	</div>
+							</div>							
+						<?php endif;
 				endfor; ?>
 			<?php else: ?>	
 				<li class="active" id="Tab[1]">
@@ -194,6 +203,11 @@ if (isset($_SESSION['memberID'])) {
 		    		</li>
 		    	</ol>
 		    	<a href="#" class="btn btn-success addTask nodrag">New task</a>
+		    	<div class="input-group-sm">
+		    		<label for="daily[1]" style="cursor: pointer">Refresh daily:</label>
+					<input class="refresh" type="checkbox" name="daily[1]" id="daily[1]" style="margin: 0 8px">
+					<input type="time" class="form-control" value="03:00" name="time[1]" disabled="disabled" style="width: auto;opacity: .3">
+		    	</div>
 		    </div>
 		
 			<div class="tabContent">
@@ -206,6 +220,11 @@ if (isset($_SESSION['memberID'])) {
 					</li>
 				</ol>
 				<a href="#" class="btn btn-success addTask nodrag">New task</a>
+				<div class="input-group-sm">
+		    		<label for="daily[2]" style="cursor: pointer">Refresh daily:</label>
+					<input class="refresh" type="checkbox" name="daily[2]" id="daily[2]" style="margin: 0 8px">
+					<input type="time" class="form-control" value="03:00" name="time[2]" disabled="disabled" style="width: auto;opacity: .3">
+		    	</div>
 			</div>
 			
 			<div class="tabContent">
@@ -218,6 +237,11 @@ if (isset($_SESSION['memberID'])) {
 					</li>
 				</ol>
 				<a href="#" class="btn btn-success addTask nodrag">New task</a>
+				<div class="input-group-sm">
+		    		<label for="daily[3]" style="cursor: pointer">Refresh daily:</label>
+					<input class="refresh" type="checkbox" name="daily[3]" id="daily[3]" style="margin: 0 8px">
+					<input type="time" class="form-control" value="03:00" name="time[3]" disabled="disabled" style="width: auto;opacity: .3">
+		    	</div>
 			</div>
 			<?php endif; ?>
 		</form>

@@ -3269,7 +3269,7 @@ fieldset[disabled] .btn-primary.focus {
   background-color: #5cb85c;
   border-color: #4cae4c;
   margin-bottom: 50px;
-  margin-right: 50px;
+  margin-right: 32px;
 }
 .btn-success:focus,
 .btn-success.focus {
@@ -4115,6 +4115,9 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 .nav-tabs {
   border-bottom: 3px solid #fff;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 .nav-tabs > li {
   float: left;

@@ -167,42 +167,56 @@ function showTasks(activeTabNumber, switching, switchDirection) {
 		tabContentArray[activeTabNumber - 1].classList.add("show");
 		if (switchDirection == 'right') {
 			tabContentArray[activeTabNumber - 1].children[0].classList.add("transition");
-			tabContentArray[activeTabNumber - 1].children[1].classList.add("transition");			
+			tabContentArray[activeTabNumber - 1].children[1].classList.add("transition");
+			tabContentArray[activeTabNumber - 1].children[2].classList.add("transition");		
 			tabContentArray[activeTabNumber - 1].children[0].classList.add("slide-from-right");
-			tabContentArray[activeTabNumber - 1].children[1].classList.add("slide-from-right");			
+			tabContentArray[activeTabNumber - 1].children[1].classList.add("slide-from-right");
+			tabContentArray[activeTabNumber - 1].children[2].classList.add("slide-from-right");			
 			prevTabContent.children[0].classList.add("transition-init-pos");
 			prevTabContent.children[1].classList.add("transition-init-pos");
+			prevTabContent.children[2].classList.add("transition-init-pos");
 			setTimeout(function(){
 				prevTabContent.children[0].classList.add("slide-to-left");
 				prevTabContent.children[1].classList.add("slide-to-left");
+				prevTabContent.children[2].classList.add("slide-to-left");
 				tabContentArray[activeTabNumber - 1].children[0].classList.add("slide-in");
 				tabContentArray[activeTabNumber - 1].children[1].classList.add("slide-in");
+				tabContentArray[activeTabNumber - 1].children[2].classList.add("slide-in");
 			}, 0);
 			setTimeout(function(){
 				tabContentArray[activeTabNumber - 1].children[0].classList.remove("transition", "slide-from-right", "slide-in");
 				tabContentArray[activeTabNumber - 1].children[1].classList.remove("transition", "slide-from-right", "slide-in");
+				tabContentArray[activeTabNumber - 1].children[2].classList.remove("transition", "slide-from-right", "slide-in");
 				prevTabContent.children[0].classList.remove("transition-init-pos", "slide-to-left");
 				prevTabContent.children[1].classList.remove("transition-init-pos", "slide-to-left");
+				prevTabContent.children[2].classList.remove("transition-init-pos", "slide-to-left");
 				prevTabContent.classList.remove("show");
 			}, 200);
 		} else {
 			tabContentArray[activeTabNumber - 1].children[0].classList.add("transition");
-			tabContentArray[activeTabNumber - 1].children[1].classList.add("transition");			
+			tabContentArray[activeTabNumber - 1].children[1].classList.add("transition");	
+			tabContentArray[activeTabNumber - 1].children[2].classList.add("transition");		
 			tabContentArray[activeTabNumber - 1].children[0].classList.add("slide-from-left");
-			tabContentArray[activeTabNumber - 1].children[1].classList.add("slide-from-left");			
+			tabContentArray[activeTabNumber - 1].children[1].classList.add("slide-from-left");
+			tabContentArray[activeTabNumber - 1].children[2].classList.add("slide-from-left");			
 			prevTabContent.children[0].classList.add("transition-init-pos");
 			prevTabContent.children[1].classList.add("transition-init-pos");
+			prevTabContent.children[2].classList.add("transition-init-pos");
 			setTimeout(function(){
 				prevTabContent.children[0].classList.add("slide-to-right");
 				prevTabContent.children[1].classList.add("slide-to-right");
+				prevTabContent.children[2].classList.add("slide-to-right");
 				tabContentArray[activeTabNumber - 1].children[0].classList.add("slide-in");
 				tabContentArray[activeTabNumber - 1].children[1].classList.add("slide-in");
+				tabContentArray[activeTabNumber - 1].children[2].classList.add("slide-in");
 			}, 0);
 			setTimeout(function(){
 				tabContentArray[activeTabNumber - 1].children[0].classList.remove("transition", "slide-from-left", "slide-in");
 				tabContentArray[activeTabNumber - 1].children[1].classList.remove("transition", "slide-from-left", "slide-in");
+				tabContentArray[activeTabNumber - 1].children[2].classList.remove("transition", "slide-from-left", "slide-in");
 				prevTabContent.children[0].classList.remove("transition-init-pos", "slide-to-right");
 				prevTabContent.children[1].classList.remove("transition-init-pos", "slide-to-right");
+				prevTabContent.children[2].classList.remove("transition-init-pos", "slide-to-right");
 				prevTabContent.classList.remove("show");
 			}, 200);
 		}
@@ -327,6 +341,9 @@ function renameInputs() {
 		var textInputArray = tabContentArray[i].querySelectorAll("textarea");
 		var checkboxArray = tabContentArray[i].querySelectorAll("input[type=checkbox]");
 		var hiddenInputArray = tabContentArray[i].querySelectorAll("input[type=hidden]");
+		var refreshLabel = tabContentArray[i].querySelectorAll("label")[0];
+		var refreshCheckbox = tabContentArray[i].querySelectorAll("input[class=refresh]")[0];
+		var refreshTime = tabContentArray[i].querySelectorAll("input[type=time]")[0];
 		for (j=0; j < textInputArray.length; j++) {
 			textInputArray[j].name = "Task[" + (parseInt(i, 10) + 1) + "][]";
 		};
@@ -336,6 +353,10 @@ function renameInputs() {
 		for (n=0; n < checkboxArray.length; n++) {
 			checkboxArray[n].name = "checkbox[" + (parseInt(i, 10) + 1) + "][]";
 		};
+		refreshLabel.setAttribute("for","daily[" + (parseInt(i, 10) + 1) + "]");
+		refreshCheckbox.name = "daily[" + (parseInt(i, 10) + 1) + "]";
+		refreshCheckbox.id = "daily[" + (parseInt(i, 10) + 1) + "]";
+		refreshTime.name = "time[" + (parseInt(i, 10) + 1) + "]";
 	};
 }
 
@@ -348,7 +369,7 @@ function activeTabClick() {
 // перечеркивание инпута
 
 document.body.addEventListener("click", function(){
-	if (event.target.type == 'checkbox') {
+	if (event.target.type == 'checkbox' && event.target.className != 'refresh') {
 		strikeOut();
 	}
 });
@@ -360,6 +381,22 @@ function strikeOut() {
 		event.target.parentNode.getElementsByTagName('textarea')[0].classList.add("redline");
 	};
 };
+
+// set refresh time
+
+form.addEventListener("click", function(){
+	if (event.target.type == 'checkbox' && event.target.className == 'refresh') {
+		if (event.target.parentNode.querySelector("[type=time]").hasAttribute("disabled")) {
+			event.target.parentNode.querySelector("[type=time]").removeAttribute("disabled");
+			event.target.parentNode.querySelector("[type=time]").style.opacity = "1";
+		} else {
+			event.target.parentNode.querySelector("[type=time]").setAttribute("disabled", "disabled");
+			event.target.parentNode.querySelector("[type=time]").style.opacity = ".3";
+		}
+	}
+});
+
+
 
 // изменение размера поля ввода названия вкладки в зависимости от длины содержимого
 

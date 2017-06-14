@@ -16,17 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
 	try
 	{
-		// $pdo->exec('DELETE FROM tasks');
 		$s1 = $pdo->prepare('DELETE FROM tasks WHERE userid = :userid');
 		$s1->bindValue(':userid', $_SESSION['memberID']);
 		$s1->execute();
 
-
-
 		$s2 = $pdo->prepare('DELETE FROM tabs WHERE userid = :userid');
 		$s2->bindValue(':userid', $_SESSION['memberID']);
 		$s2->execute();
-		// $pdo->exec('DELETE FROM tabs');
 	}
 	catch (PDOException $e)
 	{
@@ -35,12 +31,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 		exit();
 	}
 	 	for ($tabNumber=1; $tabNumber <= count($_POST['Tab']); $tabNumber++) {
-	 		$sql = "INSERT INTO tabs (tabnumber, tabname, userid)
-	 		VALUES (:tabnumber, :tabname, :userid)";
+
+	 		if (isset($_POST['time'][$tabNumber])) {
+	 			if (strtotime($_POST['time'][$tabNumber]) <= time()) {
+	 				$time = strtotime($_POST['time'][$tabNumber] . "+1 day");
+	 			} else {
+	 				$time = strtotime($_POST['time'][$tabNumber]);
+	 			}
+			} else {
+				$time = NULL;
+			}
+
+	 		$sql = "INSERT INTO tabs (tabnumber, tabname, userid, refreshtime)
+	 		VALUES (:tabnumber, :tabname, :userid, :refreshtime)";
 	 		$stmt = $pdo->prepare($sql);
 	 		$stmt->bindValue(':tabnumber', $tabNumber);
 	 		$stmt->bindValue(':tabname', $_POST['Tab'][$tabNumber-1]);
 	 		$stmt->bindValue(':userid', $_SESSION['memberID']);
+	 		$stmt->bindValue(':refreshtime', $time);
 	 		$stmt->execute();
 
 	 		for ($i=0; $i < count($_POST['Task'][$tabNumber]); $i++) {
