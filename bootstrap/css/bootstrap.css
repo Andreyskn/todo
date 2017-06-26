@@ -6913,6 +6913,10 @@ li {
   outline: none;
 }
 
+li:hover .icon-hand-paper-o:before {
+  color: rgba(0,0,0,.6);
+}
+
 @font-face {
   font-family: 'fontello';
   src: url('../../CSS/fonts/fontello.eot?79236787');
@@ -6977,5 +6981,10 @@ li {
 .icon-hand-paper-o:before { 
   content: '\f256'; 
   font-size: 16px;
-  opacity: 0.5;
+  color: rgba(0,0,0,0);
+  transition: color .3s ease-in;
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
 } /* '' */
