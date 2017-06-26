@@ -153,7 +153,7 @@ if (isset($_SESSION['memberID'])) {
                         <input type="checkbox" value="1" name="checkbox[<?php echo $tasks[$j]['tabid'];?>][]" <?php if ($tasks[$j]['checkbox'] == 1 && $tasks[$currentElmt]['refreshtime'] == NULL || $tasks[$j]['checkbox'] == 1 && time() < $tasks[$currentElmt]['refreshtime']) {echo 'checked="checked"';}?>>
 							    			<textarea class="form-control" spellcheck="false" cols="50" rows="1" name="Task[<?php echo $tasks[$j]['tabid'];?>][]"><?php echo htmlspecialchars($tasks[$j]['tasktext'], ENT_QUOTES, 'UTF-8'); ?></textarea>
 							    			<a href="#" class="close nodrag">&times;</a>
-                        <span class="drag" style="cursor: pointer;">|||</span>
+                        <span class="drag icon-hand-paper-o"></span>
 							    		</li>
 							<?php $j++;
 								endwhile;
@@ -202,6 +202,7 @@ if (isset($_SESSION['memberID'])) {
 		    			<input type='hidden' value='0' name='checkbox[1][]'>
 		    			<input type="checkbox" value="1" name="checkbox[1][]">
 		    			<a href="#" class="close nodrag">&times;</a>
+              <span class="drag icon-hand-paper-o"></span>
 		    		</li>
 		    	</ol>
 		    	<a href="#" class="btn btn-success addTask nodrag">New task</a>
@@ -219,6 +220,7 @@ if (isset($_SESSION['memberID'])) {
 						<input type='hidden' value='0' name='checkbox[2][]'>
 						<input type="checkbox" value="1" name="checkbox[2][]">
 						<a href="#" class="close nodrag">&times;</a>
+            <span class="drag icon-hand-paper-o"></span>
 					</li>
 				</ol>
 				<a href="#" class="btn btn-success addTask nodrag">New task</a>
@@ -236,6 +238,7 @@ if (isset($_SESSION['memberID'])) {
 						<input type='hidden' value='0' name='checkbox[3][]'>
 						<input type="checkbox" value="1" name="checkbox[3][]">
 						<a href="#" class="close nodrag">&times;</a>
+            <span class="drag icon-hand-paper-o"></span>
 					</li>
 				</ol>
 				<a href="#" class="btn btn-success addTask nodrag">New task</a>

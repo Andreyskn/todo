@@ -561,8 +561,15 @@ for (i=0; i < taskList.length; i++) {
 		}
 	});
 
+	taskList[i].addEventListener('slip:beforereorder', function(e) {
+        e.target.classList.remove('icon-hand-paper-o');
+        e.target.classList.add('icon-hand-grab-o');
+    });
+
 	taskList[i].addEventListener('slip:reorder', function(e) {
 		    // e.target list item reordered.
 		    e.target.parentNode.insertBefore(e.target, e.detail.insertBefore);
+		    e.target.querySelector('span[class*="drag"]').classList.remove('icon-hand-grab-o');
+		    e.target.querySelector('span[class*="drag"]').classList.add('icon-hand-paper-o');
 	});
 };
