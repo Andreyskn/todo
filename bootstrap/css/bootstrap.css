@@ -1173,7 +1173,7 @@ html {
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
-  line-height: 1.42857143;
+  line-height: 2;
   color: #333;
   background-color: #fff;
 }
@@ -2603,6 +2603,7 @@ label {
   max-width: 100%;
   margin-bottom: 5px;
   font-weight: bold;
+  cursor: pointer;
 }
 input[type="search"] {
   -webkit-box-sizing: border-box;
@@ -2611,7 +2612,7 @@ input[type="search"] {
 }
 input[type="radio"],
 input[type="checkbox"] {
-  margin: 0 10px 0 15px;
+  margin: 0 5px;
   margin-top: 1px \9;
   line-height: normal;
 }
@@ -2644,7 +2645,7 @@ output {
   margin-bottom: 15px;
   height: 34px;
   padding: 6px 12px;
-  /*font-size: 14px;*/
+  font-size: 20px;
   line-height: 1.42857143;
   color: #555;
   background-color: #fff;
@@ -2681,7 +2682,7 @@ output {
 .form-control[readonly],
 fieldset[disabled] .form-control {
   background-color: #eee;
-  opacity: 1;
+  opacity: .3;
 }
 .form-control[disabled],
 fieldset[disabled] .form-control {
@@ -3268,8 +3269,7 @@ fieldset[disabled] .btn-primary.focus {
   color: #fff;
   background-color: #5cb85c;
   border-color: #4cae4c;
-  margin-bottom: 50px;
-  margin-right: 32px;
+  margin-bottom: 14px;
 }
 .btn-success:focus,
 .btn-success.focus {
@@ -3952,6 +3952,10 @@ select[multiple].input-group-lg > .input-group-addon,
 select[multiple].input-group-lg > .input-group-btn > .btn {
   height: auto;
 }
+.input-group-sm {
+  margin-left: 32px;
+  margin-top: 8px;
+}
 .input-group-sm > .form-control,
 .input-group-sm > .input-group-addon,
 .input-group-sm > .input-group-btn > .btn {
@@ -3960,6 +3964,7 @@ select[multiple].input-group-lg > .input-group-btn > .btn {
   font-size: 12px;
   line-height: 1.5;
   border-radius: 3px;
+  width: auto;
 }
 select.input-group-sm > .form-control,
 select.input-group-sm > .input-group-addon,
@@ -5944,11 +5949,13 @@ button.list-group-item-danger.active:focus {
 }
 .close {
   font-weight: bold;
-  line-height: 1;
+  /*line-height: 1;*/
   color: red;
   text-shadow: 0 1px 0 #fff;
   filter: alpha(opacity=20);
   opacity: .7;
+  margin-left: 5px;
+  font-size: 20px;
 }
 .close:hover,
 .close:focus {
@@ -6048,12 +6055,14 @@ button.close {
 }
 .modal-footer {
   padding: 15px;
+  padding-bottom: 0;
   text-align: right;
   border-top: 1px solid #e5e5e5;
 }
 .modal-footer .btn + .btn {
   margin-bottom: 0;
   margin-left: 5px;
+  vertical-align: top;
 }
 .modal-footer .btn-group .btn + .btn {
   margin-left: -1px;
@@ -6679,6 +6688,7 @@ button.close {
   background-color: transparent;
   border: 0;
 }
+
 .hidden {
   display: none !important;
 }
@@ -6899,3 +6909,6 @@ button.close {
   }
 }
 /*# sourceMappingURL=bootstrap.css.map */
+li {
+  outline: none;
+}

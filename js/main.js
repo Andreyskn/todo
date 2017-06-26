@@ -38,18 +38,14 @@ document.body.addEventListener("click", function(){
 });
 
 function deleteTask() {
-  	if (event.target.parentNode.classList.contains("firstLine")) {
+  	if (event.target.parentNode == event.target.parentNode.parentNode.getElementsByTagName('li')[0] && event.target.parentNode.parentNode.children.length == 1) {
   		visibleTaskList.firstElementChild.querySelectorAll("textarea")[0].value = '';
   		visibleTaskList.firstElementChild.querySelectorAll("input")[1].checked = false;
   		visibleTaskList.firstElementChild.querySelectorAll("textarea")[0].classList.remove("redline");
   		visibleTaskList.firstElementChild.querySelectorAll("textarea")[0].style.height = 'auto';
   	} 
   	else {
-    event.target.parentNode.remove();
-    visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].focus();
-    visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].selectionStart = 
-    visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].selectionEnd = 
-    visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].value.length;
+    	event.target.parentNode.remove();
     }
     updateTasksArray();
 };
@@ -83,7 +79,7 @@ document.body.addEventListener("keydown", function(event) {
 
 // удаление последней строки по нажатию Backspace
 
-document.body.addEventListener("keyup", function(event) {
+document.body.addEventListener("keydown", function(event) {
 	if (visibleTaskList.lastElementChild.querySelectorAll("textarea")[0] === document.activeElement && visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].value === '' && event.keyCode == 8) {
 		deleteTask();
 	}
@@ -269,6 +265,11 @@ function newTab() {
 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelectorAll("textarea")[0].style.height = 'auto';
  	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelectorAll("input")[1].checked = false; // сброс чекбокса
  	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelectorAll("textarea")[0].classList.remove("redline");
+ 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelector("[class=refresh]").checked = false;
+ 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelector("[type=time]").value = "03:00";
+ 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelector("[type=time]").setAttribute("disabled","disabled");
+ 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelector("[type=time]").style.width = "auto";
+ 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelector("[type=time]").style.opacity = ".3"
  	renameInputs();
 	var activeTabNumber = parseInt(tablinks[tablinks.length - 2].id.match(/\d+/g), 10);
 	showTasks(activeTabNumber);
@@ -388,10 +389,8 @@ form.addEventListener("click", function(){
 	if (event.target.type == 'checkbox' && event.target.className == 'refresh') {
 		if (event.target.parentNode.querySelector("[type=time]").hasAttribute("disabled")) {
 			event.target.parentNode.querySelector("[type=time]").removeAttribute("disabled");
-			event.target.parentNode.querySelector("[type=time]").style.opacity = "1";
 		} else {
 			event.target.parentNode.querySelector("[type=time]").setAttribute("disabled", "disabled");
-			event.target.parentNode.querySelector("[type=time]").style.opacity = ".3";
 		}
 	}
 });
@@ -467,8 +466,103 @@ adjust(Array.from(Tabs.getElementsByClassName('tabName')), 1, 100, 304);
 (function () {
 	var allCheckboxes = document.body.querySelectorAll("input[type=checkbox]");
 	for (i=0; i < allCheckboxes.length; i++) {
-		if (allCheckboxes[i].getAttribute("checked") == "checked") {
+		if (allCheckboxes[i].getAttribute("checked") == "checked" && allCheckboxes[i].className != "refresh") {
 			allCheckboxes[i].parentNode.getElementsByTagName('textarea')[0].classList.add("redline");
 		}
 	};
 })();
+
+var drake = dragula([document.querySelector('#Tabs')], {
+	invalid: function (el, handle) {
+	  return el.id === 'addTab';
+	},
+	accepts: function (el, target, source, sibling) {
+		if (sibling === null) {
+			return false;
+		} else {
+			return true;
+		}
+	},
+	direction: 'horizontal'
+});
+
+var tabInitPos, tabNewPos;
+
+drake.on('drag', function(el){
+	tabInitPos = parseInt(el.id.match(/\d+/g), 10);
+});
+
+drake.on('dragend', function(el){
+	var tablinks = Tabs.getElementsByTagName('li');
+	for (j = 0; j < tablinks.length - 1; j++) {
+		tablinks[j].id = 'Tab[' + (j + 1) + ']';
+	}
+	tabNewPos = parseInt(el.id.match(/\d+/g), 10);
+	renameTasksOnDrag();
+});
+
+function renameTasksOnDrag(){
+	var tabContent = form.getElementsByClassName('tabContent');
+	var initCheckboxName = tabContent[tabInitPos-1].querySelectorAll('[name*="checkbox"]');
+	var initTaskName = tabContent[tabInitPos-1].querySelectorAll('[name*="Task"]');
+	for (j = 0; j < initCheckboxName.length; j++) {
+		initCheckboxName[j].name = "checkbox[" + tabNewPos + "][]";
+	}
+	for (n = 0; n < initTaskName.length; n++) {
+		initTaskName[n].name = "Task[" + tabNewPos + "][]";
+	}
+	if (tabInitPos > tabNewPos) {
+		for (i = tabNewPos - 1; i < tabInitPos - 1; i++) {
+			var checkbox = tabContent[i].querySelectorAll('[name*="checkbox"]');
+			for (j = 0; j < checkbox.length; j++) {
+				var checkboxName = checkbox[j].name;
+				checkbox[j].name = "checkbox[" + (parseInt(checkboxName.match(/\d+/g), 10) + 1) + "][]";
+			}
+			var task = tabContent[i].querySelectorAll('[name*="Task"]');
+			for (n = 0; n < task.length; n++) {
+				var taskName = task[n].name;
+				task[n].name = "Task[" + (parseInt(taskName.match(/\d+/g), 10) + 1) + "][]";
+			}
+		}
+		form.insertBefore(tabContent[tabInitPos-1], tabContent[tabNewPos-1]);
+	}
+	if (tabInitPos < tabNewPos) {
+		for (i = tabInitPos; i < tabNewPos; i++) {
+			var checkbox = tabContent[i].querySelectorAll('[name*="checkbox"]');
+			for (j = 0; j < checkbox.length; j++) {
+				var checkboxName = checkbox[j].name;
+				checkbox[j].name = "checkbox[" + (parseInt(checkboxName.match(/\d+/g), 10) - 1) + "][]";
+			}
+			var task = tabContent[i].querySelectorAll('[name*="Task"]');
+			for (n = 0; n < task.length; n++) {
+				var taskName = task[n].name;
+				task[n].name = "Task[" + (parseInt(taskName.match(/\d+/g), 10) - 1) + "][]";
+			}
+		}
+		form.insertBefore(tabContent[tabInitPos-1], tabContent[tabNewPos]);
+	}
+	
+};
+
+var taskList = document.querySelectorAll('.tabContent>ol');
+for (i=0; i < taskList.length; i++) {
+	new Slip(taskList[i]);
+
+	taskList[i].addEventListener('slip:beforeswipe', function(e) {
+	    e.preventDefault(); // won't move sideways if prevented
+	});
+
+	taskList[i].addEventListener('slip:beforewait', function(e) {
+		// if prevented element will be dragged (instead of page scrolling)	    
+		if (e.target.classList.contains("drag")){
+		    e.preventDefault();
+		} else {
+			return false;
+		}
+	});
+
+	taskList[i].addEventListener('slip:reorder', function(e) {
+		    // e.target list item reordered.
+		    e.target.parentNode.insertBefore(e.target, e.detail.insertBefore);
+	});
+};

@@ -50,6 +50,7 @@ if (isset($_SESSION['memberID'])) {
 	<meta charset="UTF-8">
 	<title>TODO list</title>
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="css/dragula.css">
 </head>
 <body>
 	<!-- Modal 1-->
@@ -147,11 +148,12 @@ if (isset($_SESSION['memberID'])) {
 							$currentElmt = $i;
 							for ($j=$i; $j < count($tasks); $j++):
 								while (isset($tasks[$j]) && $tasks[$j]['tabid'] == $tasks[$currentElmt]['tabid']): ?>
-										<li <?php if ($j == $currentElmt) {echo 'class="firstLine"';}?>>
+										<li>
+                        <input type='hidden' value='0' name='checkbox[<?php echo $tasks[$j]['tabid'];?>][]'>
+                        <input type="checkbox" value="1" name="checkbox[<?php echo $tasks[$j]['tabid'];?>][]" <?php if ($tasks[$j]['checkbox'] == 1 && $tasks[$currentElmt]['refreshtime'] == NULL || $tasks[$j]['checkbox'] == 1 && time() < $tasks[$currentElmt]['refreshtime']) {echo 'checked="checked"';}?>>
 							    			<textarea class="form-control" spellcheck="false" cols="50" rows="1" name="Task[<?php echo $tasks[$j]['tabid'];?>][]"><?php echo htmlspecialchars($tasks[$j]['tasktext'], ENT_QUOTES, 'UTF-8'); ?></textarea>
-							    			<input type='hidden' value='0' name='checkbox[<?php echo $tasks[$j]['tabid'];?>][]'>
-							    			<input type="checkbox" value="1" name="checkbox[<?php echo $tasks[$j]['tabid'];?>][]" <?php if ($tasks[$j]['checkbox'] == 1 && time() < $tasks[$currentElmt]['refreshtime']) {echo 'checked="checked"';}?>>
 							    			<a href="#" class="close nodrag">&times;</a>
+                        <span class="drag" style="cursor: pointer;">|||</span>
 							    		</li>
 							<?php $j++;
 								endwhile;
@@ -159,12 +161,12 @@ if (isset($_SESSION['memberID'])) {
 							echo "</ol>";
 							echo '<a href="#" class="btn btn-success addTask nodrag">New task</a>';?>
 							<div class="input-group-sm">
-					    		<label for="daily[<?php echo $tasks[$currentElmt]['tabid'];?>]" style="cursor: pointer">Refresh daily:</label>
-								<input class="refresh" type="checkbox" name="daily[<?php echo $tasks[$currentElmt]['tabid'];?>]" id="daily[<?php echo $tasks[$currentElmt]['tabid'];?>]" style="margin: 0 8px"
+					    		<label for="daily[<?php echo $tasks[$currentElmt]['tabid'];?>]">Refresh daily:</label>
+								<input class="refresh" type="checkbox" name="daily[<?php echo $tasks[$currentElmt]['tabid'];?>]" id="daily[<?php echo $tasks[$currentElmt]['tabid'];?>]"
 								<?php if ($tasks[$currentElmt]['refreshtime'] != NULL) {echo 'checked="checked"';}?>>
-								<input type="time" class="form-control" name="time[<?php echo $tasks[$currentElmt]['tabid'];?>]" <?php if ($tasks[$currentElmt]['refreshtime'] == NULL) {
-									echo 'value="03:00" disabled="disabled" style="width: auto;opacity: .3"';
-								} else {echo 'value="' . date("h:i", $tasks[$currentElmt]['refreshtime']) . '" style="width: auto;opacity: 1"';} ?>>
+								<input type="time" name="time[<?php echo $tasks[$currentElmt]['tabid'];?>]" <?php if ($tasks[$currentElmt]['refreshtime'] == NULL) {
+									echo 'value="03:00" class="form-control" disabled="disabled"';
+								} else {echo 'class="form-control" value="' . date("h:i", $tasks[$currentElmt]['refreshtime']) . '"';} ?>>
 					    	</div>
 							</div>							
 						<?php endif;
@@ -195,7 +197,7 @@ if (isset($_SESSION['memberID'])) {
 			
 		    <div class="show tabContent">
 		    	<ol>
-		    		<li class="firstLine">
+		    		<li>
 		    			<textarea class="form-control" spellcheck="false" name="Task[1][]" cols="50" rows="1" autofocus></textarea>
 		    			<input type='hidden' value='0' name='checkbox[1][]'>
 		    			<input type="checkbox" value="1" name="checkbox[1][]">
@@ -204,15 +206,15 @@ if (isset($_SESSION['memberID'])) {
 		    	</ol>
 		    	<a href="#" class="btn btn-success addTask nodrag">New task</a>
 		    	<div class="input-group-sm">
-		    		<label for="daily[1]" style="cursor: pointer">Refresh daily:</label>
-					<input class="refresh" type="checkbox" name="daily[1]" id="daily[1]" style="margin: 0 8px">
-					<input type="time" class="form-control" value="03:00" name="time[1]" disabled="disabled" style="width: auto;opacity: .3">
+		    		<label for="daily[1]">Refresh daily:</label>
+					<input class="refresh" type="checkbox" name="daily[1]" id="daily[1]">
+					<input type="time" class="form-control" value="03:00" name="time[1]" disabled="disabled">
 		    	</div>
 		    </div>
 		
 			<div class="tabContent">
 				<ol>
-					<li class="firstLine">
+					<li>
 						<textarea class="form-control" spellcheck="false" name="Task[2][]" cols="50" rows="1"></textarea>
 						<input type='hidden' value='0' name='checkbox[2][]'>
 						<input type="checkbox" value="1" name="checkbox[2][]">
@@ -221,15 +223,15 @@ if (isset($_SESSION['memberID'])) {
 				</ol>
 				<a href="#" class="btn btn-success addTask nodrag">New task</a>
 				<div class="input-group-sm">
-		    		<label for="daily[2]" style="cursor: pointer">Refresh daily:</label>
-					<input class="refresh" type="checkbox" name="daily[2]" id="daily[2]" style="margin: 0 8px">
-					<input type="time" class="form-control" value="03:00" name="time[2]" disabled="disabled" style="width: auto;opacity: .3">
+		    		<label for="daily[2]">Refresh daily:</label>
+					<input class="refresh" type="checkbox" name="daily[2]" id="daily[2]">
+					<input type="time" class="form-control" value="03:00" name="time[2]" disabled="disabled">
 		    	</div>
 			</div>
 			
 			<div class="tabContent">
 				<ol>
-					<li class="firstLine">
+					<li>
 						<textarea class="form-control" spellcheck="false" name="Task[3][]" cols="50" rows="1"></textarea>
 						<input type='hidden' value='0' name='checkbox[3][]'>
 						<input type="checkbox" value="1" name="checkbox[3][]">
@@ -238,9 +240,9 @@ if (isset($_SESSION['memberID'])) {
 				</ol>
 				<a href="#" class="btn btn-success addTask nodrag">New task</a>
 				<div class="input-group-sm">
-		    		<label for="daily[3]" style="cursor: pointer">Refresh daily:</label>
-					<input class="refresh" type="checkbox" name="daily[3]" id="daily[3]" style="margin: 0 8px">
-					<input type="time" class="form-control" value="03:00" name="time[3]" disabled="disabled" style="width: auto;opacity: .3">
+		    		<label for="daily[3]">Refresh daily:</label>
+					<input class="refresh" type="checkbox" name="daily[3]" id="daily[3]">
+					<input type="time" class="form-control" value="03:00" name="time[3]" disabled="disabled">
 		    	</div>
 			</div>
 			<?php endif; ?>
@@ -249,6 +251,8 @@ if (isset($_SESSION['memberID'])) {
 </body>
 </html>
 
+<script src='js/slip.js'></script>
+<script src='js/dragula.js'></script>
 <script src="js/jquery-3.2.1.js"></script>
 <script src="js/main.js"></script>
 <script src="js/ajax.js"></script>
