@@ -1,4 +1,4 @@
-var visibleTaskList = document.getElementsByClassName('show')[0].firstElementChild;
+var visibleTaskList = document.getElementsByClassName('show')[0].querySelector('ol');
 
 // клонирование первой строки
 
@@ -6,7 +6,7 @@ document.body.addEventListener("click", function(){
 	if (event.target.classList.contains("addTask")) {
 		event.preventDefault();
 		newTask();
-		window.scrollTo(0,document.body.scrollHeight);
+		event.target.scrollIntoView(false);
 	}
 });
 
@@ -18,13 +18,19 @@ document.body.addEventListener("dragstart", function(){
 
  function newTask() {
  	var cloneTask = visibleTaskList.firstElementChild.cloneNode(true);
- 	cloneTask.removeAttribute("class");
+ 	cloneTask.removeAttribute("style");
  	visibleTaskList.appendChild(cloneTask);
- 	visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].value = ''; //очистка инпута
+ 	visibleTaskList.lastElementChild.querySelector("textarea").value = ''; //очистка инпута
  	visibleTaskList.lastElementChild.querySelectorAll("input")[1].checked = false; // сброс чекбокса
- 	visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].classList.remove("redline");
- 	visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].focus();
- 	visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].style.height = 'auto';
+ 	visibleTaskList.lastElementChild.querySelector("textarea").classList.remove("redline");
+ 	visibleTaskList.lastElementChild.querySelector("textarea").focus();
+ 	visibleTaskList.lastElementChild.querySelector("textarea").style.height = 'auto';
+
+ 	if (visibleTaskList.parentNode.querySelector('ol[class*="complete"]')) {
+  		var start = visibleTaskList.getElementsByTagName('li').length - visibleTaskList.querySelectorAll('[class*="redline"]').length + 1;
+  		visibleTaskList.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', start);
+  	}
+
  	updateTasksArray();
  };
 
@@ -38,13 +44,31 @@ document.body.addEventListener("click", function(){
 });
 
 function deleteTask() {
-  	if (event.target.parentNode == event.target.parentNode.parentNode.getElementsByTagName('li')[0] && event.target.parentNode.parentNode.children.length == 1) {
-  		visibleTaskList.firstElementChild.querySelectorAll("textarea")[0].value = '';
-  		visibleTaskList.firstElementChild.querySelectorAll("input")[1].checked = false;
-  		visibleTaskList.firstElementChild.querySelectorAll("textarea")[0].classList.remove("redline");
-  		visibleTaskList.firstElementChild.querySelectorAll("textarea")[0].style.height = 'auto';
+  	// if (event.target.parentNode == visibleTaskList.firstElementChild && visibleTaskList.children.length == 1) {
+	if (event.target.parentNode == visibleTaskList.querySelector('li:not([class])') && visibleTaskList.querySelectorAll('li:not([class])').length == 1) {
+  		event.target.parentNode.querySelector("textarea").value = '';
+  		event.target.parentNode.querySelectorAll("input")[1].checked = false;
+  		event.target.parentNode.querySelector("textarea").classList.remove("redline");
+  		event.target.parentNode.querySelector("textarea").style.height = 'auto';
   	} 
   	else {
+  		if (visibleTaskList.parentNode.querySelector('ol[class*="complete"]')) {
+	  		var start = visibleTaskList.getElementsByTagName('li').length - visibleTaskList.querySelectorAll('[class*="redline"]').length;
+	  		visibleTaskList.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', (event.target.parentNode.parentNode.classList.contains('complete')?start+1:start));
+	  		if (event.target.parentNode.hasAttribute('class') && visibleTaskList.children.length > 1) {
+	  			var cloneClass = event.target.parentNode.className;
+	  			visibleTaskList.querySelector('[class="'+cloneClass+'"').remove();
+	  		}
+	  		if (event.target.parentNode.parentNode.classList.contains("complete") && visibleTaskList.children.length == 1) {
+	  			event.target.parentNode.remove();
+	  			visibleTaskList.querySelector('li').removeAttribute('class');
+	  			visibleTaskList.querySelector('li').removeAttribute('style');
+	  			visibleTaskList.querySelector("textarea").value = '';
+		  		visibleTaskList.querySelectorAll("input")[1].checked = false;
+		  		visibleTaskList.querySelector("textarea").classList.remove("redline");
+		  		visibleTaskList.querySelector("textarea").style.height = 'auto';
+	  		}
+	  	}
     	event.target.parentNode.remove();
     }
     updateTasksArray();
@@ -146,10 +170,6 @@ function switchTab() {
 	}
 
 	showTasks(activeTabNumber, true, switchDirection);
-	// фокус на пустое поле нужно сделать через промис или убрать совсем
-	// if (visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].value == '') {
-	// 	visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].focus();
-	// }
 	updateTasksArray();
 };
 
@@ -161,68 +181,24 @@ function showTasks(activeTabNumber, switching, switchDirection) {
 	var prevTabContent = document.getElementsByClassName('show')[0];
 	if (switching) {
 		tabContentArray[activeTabNumber - 1].classList.add("show");
-		if (switchDirection == 'right') {
-			tabContentArray[activeTabNumber - 1].children[0].classList.add("transition");
-			tabContentArray[activeTabNumber - 1].children[1].classList.add("transition");
-			tabContentArray[activeTabNumber - 1].children[2].classList.add("transition");		
-			tabContentArray[activeTabNumber - 1].children[0].classList.add("slide-from-right");
-			tabContentArray[activeTabNumber - 1].children[1].classList.add("slide-from-right");
-			tabContentArray[activeTabNumber - 1].children[2].classList.add("slide-from-right");			
-			prevTabContent.children[0].classList.add("transition-init-pos");
-			prevTabContent.children[1].classList.add("transition-init-pos");
-			prevTabContent.children[2].classList.add("transition-init-pos");
-			setTimeout(function(){
-				prevTabContent.children[0].classList.add("slide-to-left");
-				prevTabContent.children[1].classList.add("slide-to-left");
-				prevTabContent.children[2].classList.add("slide-to-left");
-				tabContentArray[activeTabNumber - 1].children[0].classList.add("slide-in");
-				tabContentArray[activeTabNumber - 1].children[1].classList.add("slide-in");
-				tabContentArray[activeTabNumber - 1].children[2].classList.add("slide-in");
-			}, 0);
-			setTimeout(function(){
-				tabContentArray[activeTabNumber - 1].children[0].classList.remove("transition", "slide-from-right", "slide-in");
-				tabContentArray[activeTabNumber - 1].children[1].classList.remove("transition", "slide-from-right", "slide-in");
-				tabContentArray[activeTabNumber - 1].children[2].classList.remove("transition", "slide-from-right", "slide-in");
-				prevTabContent.children[0].classList.remove("transition-init-pos", "slide-to-left");
-				prevTabContent.children[1].classList.remove("transition-init-pos", "slide-to-left");
-				prevTabContent.children[2].classList.remove("transition-init-pos", "slide-to-left");
-				prevTabContent.classList.remove("show");
-			}, 200);
-		} else {
-			tabContentArray[activeTabNumber - 1].children[0].classList.add("transition");
-			tabContentArray[activeTabNumber - 1].children[1].classList.add("transition");	
-			tabContentArray[activeTabNumber - 1].children[2].classList.add("transition");		
-			tabContentArray[activeTabNumber - 1].children[0].classList.add("slide-from-left");
-			tabContentArray[activeTabNumber - 1].children[1].classList.add("slide-from-left");
-			tabContentArray[activeTabNumber - 1].children[2].classList.add("slide-from-left");			
-			prevTabContent.children[0].classList.add("transition-init-pos");
-			prevTabContent.children[1].classList.add("transition-init-pos");
-			prevTabContent.children[2].classList.add("transition-init-pos");
-			setTimeout(function(){
-				prevTabContent.children[0].classList.add("slide-to-right");
-				prevTabContent.children[1].classList.add("slide-to-right");
-				prevTabContent.children[2].classList.add("slide-to-right");
-				tabContentArray[activeTabNumber - 1].children[0].classList.add("slide-in");
-				tabContentArray[activeTabNumber - 1].children[1].classList.add("slide-in");
-				tabContentArray[activeTabNumber - 1].children[2].classList.add("slide-in");
-			}, 0);
-			setTimeout(function(){
-				tabContentArray[activeTabNumber - 1].children[0].classList.remove("transition", "slide-from-left", "slide-in");
-				tabContentArray[activeTabNumber - 1].children[1].classList.remove("transition", "slide-from-left", "slide-in");
-				tabContentArray[activeTabNumber - 1].children[2].classList.remove("transition", "slide-from-left", "slide-in");
-				prevTabContent.children[0].classList.remove("transition-init-pos", "slide-to-right");
-				prevTabContent.children[1].classList.remove("transition-init-pos", "slide-to-right");
-				prevTabContent.children[2].classList.remove("transition-init-pos", "slide-to-right");
-				prevTabContent.classList.remove("show");
-			}, 200);
-		}
-		visibleTaskList = tabContentArray[activeTabNumber - 1].children[0];
+		Array.from(tabContentArray[activeTabNumber - 1].children).forEach(e => e.classList.add("transition",(switchDirection == 'right' ? "slide-from-right":"slide-from-left")));
+		Array.from(prevTabContent.children).forEach(e=>e.classList.add("transition-init-pos"));
+		setTimeout(function(){
+			Array.from(prevTabContent.children).forEach(e=>e.classList.add((switchDirection == 'right' ? "slide-to-left":"slide-to-right")));
+			Array.from(tabContentArray[activeTabNumber - 1].children).forEach(e=>e.classList.add("slide-in"));
+		}, 0);
+		setTimeout(function(){
+			Array.from(tabContentArray[activeTabNumber - 1].children).forEach(e=>e.classList.remove("transition", "slide-from-right", "slide-from-left", "slide-in"));
+			Array.from(prevTabContent.children).forEach(e=>e.classList.remove("transition-init-pos", "slide-to-left", "slide-to-right"));
+			prevTabContent.classList.remove("show");
+		}, 200);
+		visibleTaskList = tabContentArray[activeTabNumber - 1].querySelector('ol');
 	} else {		
 		for (i=0; i < tabContentArray.length; i++) {
 			tabContentArray[i].classList.remove("show");	
 		};
 		tabContentArray[activeTabNumber - 1].classList.add("show");
-		visibleTaskList = document.getElementsByClassName('show')[0].firstElementChild;
+		visibleTaskList = document.getElementsByClassName('show')[0].querySelector('ol');
 		return visibleTaskList;
 	}
 	return visibleTaskList;
@@ -254,30 +230,44 @@ function newTab() {
 	form.appendChild(cloneTabContent);
 
 	// удаление всех инпутов, кроме первого
-	
-	var lastTabContentTasks = document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].getElementsByTagName('li');
+	var lastTabContent = document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1];
+	var lastTabContentTasks = lastTabContent.getElementsByTagName('li');
 	var j = lastTabContentTasks.length - 1;
 	while (j > 0) {
 		lastTabContentTasks[j].remove();
 		j--;
 	}
-	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelectorAll("textarea")[0].value = ''; //очистка инпута
-	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelectorAll("textarea")[0].style.height = 'auto';
- 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelectorAll("input")[1].checked = false; // сброс чекбокса
- 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelectorAll("textarea")[0].classList.remove("redline");
- 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelector("[class=refresh]").checked = false;
- 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelector("[type=time]").value = "03:00";
- 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelector("[type=time]").setAttribute("disabled","disabled");
- 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelector("[type=time]").style.width = "auto";
- 	document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].querySelector("[type=time]").style.opacity = ".3"
+
+	lastTabContent.querySelector("textarea").innerHTML = ''; //очистка инпута
+	lastTabContent.querySelector("textarea").style.height = 'auto';
+ 	lastTabContent.querySelectorAll("input")[1].checked = false; // сброс чекбокса
+ 	lastTabContent.querySelector("textarea").classList.remove("redline");
+ 	lastTabContent.querySelector("[class=refresh]").checked = false;
+ 	lastTabContent.querySelector("[type=time]").value = "03:00";
+ 	lastTabContent.querySelector("[type=time]").setAttribute("disabled","disabled");
+ 	lastTabContent.querySelector("[type=time]").style.width = "auto";
+ 	lastTabContent.querySelector("[type=time]").style.opacity = ".3"
  	renameInputs();
 	var activeTabNumber = parseInt(tablinks[tablinks.length - 2].id.match(/\d+/g), 10);
 	showTasks(activeTabNumber);
-
 	var tabNamesArray = Tabs.querySelectorAll("input[type=text]");
 	adjust(tabNamesArray, 1, 100, 300);
 	updateTasksArray();
 	setTasksDragging();
+	var listener = function(){
+		if (event.keyCode == 13) {
+			visibleTaskList.querySelector('textarea').focus();
+		}
+	}
+	tablinks[tablinks.length - 2].querySelector('input').addEventListener("keyup", listener);
+	
+	tablinks[tablinks.length - 2].querySelector('input').addEventListener("keydown", function(){
+		if (event.keyCode == 13) {
+			setTimeout(function(){
+				tablinks[tablinks.length - 2].querySelector('input').removeEventListener("keyup", listener);
+			}, 2000);
+		}
+	});	
 };
 
 // удаление вкладки
@@ -379,9 +369,32 @@ document.body.addEventListener("click", function(){
 function strikeOut() {
 	if (event.target.checked == false) {
 		event.target.parentNode.getElementsByTagName('textarea')[0].classList.remove("redline");
+		if (visibleTaskList.parentNode.querySelector('ol[class*="complete"]') && event.target.parentNode.parentNode.classList.contains('complete')) {
+	  		var cloneClass = event.target.parentNode.className;
+	  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').removeAttribute('style');
+	  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').querySelector('[type="checkbox"]').checked = false;
+	  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').querySelector('textarea').classList.remove("redline");
+	  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').removeAttribute('class');
+	  		event.target.parentNode.remove();
+			var start = visibleTaskList.getElementsByTagName('li').length - visibleTaskList.querySelectorAll('[class*="redline"]').length + 1;
+	  		visibleTaskList.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', start);
+	  		updateTasksArray();
+		}	
 	} else {
 		event.target.parentNode.getElementsByTagName('textarea')[0].classList.add("redline");
-	};
+		if (visibleTaskList.parentNode.querySelector('ol[class*="complete"]')) {
+			var linkNumber = btoa(Math.floor(Math.random() * Math.pow(2, 64)));
+			event.target.parentNode.classList.add(linkNumber);
+	  		var completeClone = event.target.parentNode.cloneNode(true);
+	  		completeClone.classList.add(linkNumber);
+			Array.from(completeClone.children).forEach(e => e.removeAttribute('name'));
+			visibleTaskList.parentNode.querySelector('ol[class*="complete"]').appendChild(completeClone);
+			var start = visibleTaskList.getElementsByTagName('li').length - visibleTaskList.querySelectorAll('[class*="redline"]').length + 1;
+	  		visibleTaskList.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', start);
+	  		event.target.parentNode.style.display = 'none';
+	  		updateTasksArray();
+		}		
+  	}
 };
 
 // set refresh time
@@ -545,7 +558,7 @@ function renameTasksOnDrag(){
 	
 };
 
-function setTasksDragging() {
+function setTasksDragging() { // баг при переносе выделенного текста
 	var taskList = document.querySelectorAll('.tabContent>ol');
 	for (i=0; i < taskList.length; i++) {
 		new Slip(taskList[i]);
@@ -587,4 +600,84 @@ function setTasksDragging() {
 	};
 };
 
+document.body.addEventListener("click", function(){
+	if (event.target.classList.contains("list-styler")) {
+		event.target.parentNode.querySelectorAll('ol').forEach(elem => elem.classList.toggle('list-unstyled'));
+		event.target.firstElementChild.value ^= 1;
+	}
+	if (event.target.classList.contains("list-sorter")) {
+		event.target.classList.toggle('icon-down-outline');
+		event.target.classList.toggle('icon-up-outline');
+		event.target.firstElementChild.value ^= 1;
+		if (event.target.parentNode.getElementsByClassName('complete').length == 0) {
+			var completeTasks = document.createElement('ol');
+			completeTasks.className = "complete" + (event.target.parentNode.querySelector('ol').classList.contains('list-unstyled') ? " list-unstyled" : "");
+			event.target.parentNode.appendChild(completeTasks);
+		}
+		Array.from(event.target.parentNode.querySelectorAll('[class*="redline"]')).forEach(function(e){
+			if (event.target.firstElementChild.value == 1) {
+				var linkNumber = btoa(Math.floor(Math.random() * Math.pow(2, 64)));
+				e.parentNode.classList.add(linkNumber);
+				var completeClone = e.parentNode.cloneNode(true);
+				completeClone.classList.add(linkNumber);
+				Array.from(completeClone.children).forEach(e => e.removeAttribute('name'));
+				event.target.parentNode.querySelector('ol[class*="complete"]').appendChild(completeClone);
+			}
+			event.target.firstElementChild.value == 1 ? e.parentNode.style.display = 'none' : e.parentNode.style.removeProperty('display');
+		})
+		var start = visibleTaskList.getElementsByTagName('li').length - visibleTaskList.querySelectorAll('[class*="redline"]').length + 1;
+		event.target.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', start);
+		event.target.parentNode.querySelector('ol[class*="complete"]').addEventListener("input", function(){
+			var cloneText = event.target.value;
+			var cloneClass = event.target.parentNode.className;
+			visibleTaskList.querySelector('[class*="'+cloneClass+'"]').querySelector('textarea').value = cloneText;
+		})
+		updateTasksArray();
+		setTasksDragging();
+		if (event.target.firstElementChild.value == 0) {
+			event.target.parentNode.querySelector('ol[class*="complete"]').remove();
+		}		
+	}
+});
+
+function listHandler(){
+	var listStyle = document.querySelectorAll('[class*=list-styler]');
+	var listSort = document.querySelectorAll('[class*=list-sorter]');
+	listStyle.forEach(function(el){
+		if (el.firstElementChild.value == 1) {			
+			el.parentNode.querySelectorAll('ol').forEach(elem => elem.classList.toggle('list-unstyled'));
+		}
+	});
+	listSort.forEach(function(el){
+		if (el.firstElementChild.value == 1) {
+			el.classList.toggle('icon-down-outline');
+			el.classList.toggle('icon-up-outline');
+			var completeTasks = document.createElement('ol');
+			completeTasks.className = "complete" + (el.parentNode.querySelector('ol').classList.contains('list-unstyled') ? " list-unstyled" : "");
+			el.parentNode.appendChild(completeTasks);
+			Array.from(el.parentNode.querySelectorAll('[class*="redline"]')).forEach(function(e){
+				var linkNumber = btoa(Math.floor(Math.random() * Math.pow(2, 64)));
+				e.parentNode.classList.add(linkNumber);
+				var completeClone = e.parentNode.cloneNode(true);
+				completeClone.classList.add(linkNumber);
+				Array.from(completeClone.children).forEach(e => e.removeAttribute('name'));
+				el.parentNode.querySelector('ol[class*="complete"]').appendChild(completeClone);
+				e.parentNode.style.display = 'none';
+			});
+			var start = el.parentNode.querySelector('ol').getElementsByTagName('li').length - el.parentNode.querySelector('ol').querySelectorAll('[class*="redline"]').length + 1;
+			el.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', start);
+			el.parentNode.querySelector('ol[class*="complete"]').addEventListener("input", function(){
+				var cloneText = event.target.value;
+				var cloneClass = event.target.parentNode.className;
+				visibleTaskList.querySelector('[class*="'+cloneClass+'"]').querySelector('textarea').value = cloneText;
+			})
+		}
+	});
+}
+
+listHandler();
 setTasksDragging();
+
+// оценить вероятность генерации неуникальной комбинации символов методом btoa(Math.floor(Math.random() * Math.pow(2, 64)))
+
+// баг при перетаскивании выделенного текста задачи

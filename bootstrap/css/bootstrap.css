@@ -3269,7 +3269,7 @@ fieldset[disabled] .btn-primary.focus {
   color: #fff;
   background-color: #5cb85c;
   border-color: #4cae4c;
-  margin-bottom: 14px;
+  margin-bottom: 25px;
 }
 .btn-success:focus,
 .btn-success.focus {
@@ -6917,6 +6917,10 @@ li:hover .icon-hand-paper-o:before {
   color: rgba(0,0,0,.6);
 }
 
+ol li {
+  width: 580px;
+}
+
 @font-face {
   font-family: 'fontello';
   src: url('../../CSS/fonts/fontello.eot?79236787');
@@ -6988,3 +6992,24 @@ li:hover .icon-hand-paper-o:before {
   cursor: -moz-grab;
   cursor: -webkit-grab;
 } /* '' */
+.icon-up-outline:before { content: '\e800'; } /* '' */
+.icon-down-outline:before { content: '\e801'; } /* '' */
+.icon-list:before { content: '\e802'; } /* '' */
+
+.list-styler {
+  width: 35px;
+  margin-bottom: 12px;
+  margin-left: 50px;
+  margin-right: 5px;
+}
+.list-sorter {
+  width: 35px;
+  margin-bottom: 12px;
+  margin-right: auto;
+}
+.tabContent ol{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex: 0 1 100%;
+}

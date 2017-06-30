@@ -16,7 +16,7 @@ session_start();
 if (isset($_SESSION['memberID'])) {
 	try
 	{
-		$stmt = $pdo->prepare('SELECT tasktext, checkbox, tabid, tabname, refreshtime 
+		$stmt = $pdo->prepare('SELECT tasktext, checkbox, tabid, tabname, refreshtime, liststyle, listsort
 		FROM tasks 
 		INNER JOIN tabs ON tabid = tabnumber
 		WHERE tasks.userid = :userid
@@ -38,7 +38,9 @@ if (isset($_SESSION['memberID'])) {
 		  'checkbox' => $row['checkbox'],
 		  'tabid' => $row['tabid'],
 		  'tabname' => $row['tabname'],
-		  'refreshtime' => $row['refreshtime']
+		  'refreshtime' => $row['refreshtime'],
+      'liststyle' => $row['liststyle'],
+      'listsort' => $row['listsort']
 		);
 	}
 }
@@ -143,8 +145,10 @@ if (isset($_SESSION['memberID'])) {
 				<?php for ($i=0; $i < count($tasks); $i++): 
 						if ($i == 0 || $tasks[$i]['tabid'] != $tasks[$i - 1]['tabid']): ?>
 							<div class="<?php if ($i == 0) {echo 'show ';}?>tabContent">
+              <button type="button" class="list-styler icon-list"><input type="hidden" name="list-styler[]" value="<?php echo $tasks[$i]['liststyle']; ?>"></button>
+              <button type="button" class="list-sorter icon-down-outline"><input type="hidden" name="list-sorter[]" value="<?php echo $tasks[$i]['listsort']; ?>"></button>
 							<?php
-							echo "<ol>";
+							echo "<ol class='list-unstyled'>";
 							$currentElmt = $i;
 							for ($j=$i; $j < count($tasks); $j++):
 								while (isset($tasks[$j]) && $tasks[$j]['tabid'] == $tasks[$currentElmt]['tabid']): ?>
@@ -196,11 +200,13 @@ if (isset($_SESSION['memberID'])) {
 			</ul>
 			
 		    <div class="show tabContent">
-		    	<ol>
+          <button type="button" class="list-styler icon-list"><input type="hidden" name="list-styler[]" value="0"></button>
+          <button type="button" class="list-sorter icon-down-outline"><input type="hidden" name="list-sorter[]" value="0"></button>
+		    	<ol class='list-unstyled'>
 		    		<li>
+              <input type='hidden' value='0' name='checkbox[1][]'>
+              <input type="checkbox" value="1" name="checkbox[1][]">
 		    			<textarea class="form-control" spellcheck="false" name="Task[1][]" cols="50" rows="1" autofocus></textarea>
-		    			<input type='hidden' value='0' name='checkbox[1][]'>
-		    			<input type="checkbox" value="1" name="checkbox[1][]">
 		    			<a href="#" class="close nodrag">&times;</a>
               <span class="drag icon-hand-paper-o"></span>
 		    		</li>
@@ -208,45 +214,49 @@ if (isset($_SESSION['memberID'])) {
 		    	<a href="#" class="btn btn-success addTask nodrag">New task</a>
 		    	<div class="input-group-sm">
 		    		<label for="daily[1]">Refresh daily:</label>
-					<input class="refresh" type="checkbox" name="daily[1]" id="daily[1]">
-					<input type="time" class="form-control" value="03:00" name="time[1]" disabled="disabled">
+  					<input class="refresh" type="checkbox" name="daily[1]" id="daily[1]">
+  					<input type="time" class="form-control" value="03:00" name="time[1]" disabled="disabled">
 		    	</div>
 		    </div>
 		
 			<div class="tabContent">
-				<ol>
+        <button type="button" class="list-styler icon-list"><input type="hidden" name="list-styler[]" value="0"></button>
+        <button type="button" class="list-sorter icon-down-outline"><input type="hidden" name="list-sorter[]" value="0"></button>
+				<ol class='list-unstyled'>
 					<li>
+            <input type='hidden' value='0' name='checkbox[2][]'>
+            <input type="checkbox" value="1" name="checkbox[2][]">          
 						<textarea class="form-control" spellcheck="false" name="Task[2][]" cols="50" rows="1"></textarea>
-						<input type='hidden' value='0' name='checkbox[2][]'>
-						<input type="checkbox" value="1" name="checkbox[2][]">
 						<a href="#" class="close nodrag">&times;</a>
             <span class="drag icon-hand-paper-o"></span>
 					</li>
 				</ol>
 				<a href="#" class="btn btn-success addTask nodrag">New task</a>
 				<div class="input-group-sm">
-		    		<label for="daily[2]">Refresh daily:</label>
+		    	<label for="daily[2]">Refresh daily:</label>
 					<input class="refresh" type="checkbox" name="daily[2]" id="daily[2]">
 					<input type="time" class="form-control" value="03:00" name="time[2]" disabled="disabled">
-		    	</div>
+		    </div>
 			</div>
 			
 			<div class="tabContent">
-				<ol>
+        <button type="button" class="list-styler icon-list"><input type="hidden" name="list-styler[]" value="0"></button>
+        <button type="button" class="list-sorter icon-down-outline"><input type="hidden" name="list-sorter[]" value="0"></button>
+				<ol class='list-unstyled'>
 					<li>
+            <input type='hidden' value='0' name='checkbox[3][]'>
+            <input type="checkbox" value="1" name="checkbox[3][]">          
 						<textarea class="form-control" spellcheck="false" name="Task[3][]" cols="50" rows="1"></textarea>
-						<input type='hidden' value='0' name='checkbox[3][]'>
-						<input type="checkbox" value="1" name="checkbox[3][]">
 						<a href="#" class="close nodrag">&times;</a>
             <span class="drag icon-hand-paper-o"></span>
 					</li>
 				</ol>
 				<a href="#" class="btn btn-success addTask nodrag">New task</a>
 				<div class="input-group-sm">
-		    		<label for="daily[3]">Refresh daily:</label>
+		    	<label for="daily[3]">Refresh daily:</label>
 					<input class="refresh" type="checkbox" name="daily[3]" id="daily[3]">
 					<input type="time" class="form-control" value="03:00" name="time[3]" disabled="disabled">
-		    	</div>
+		    </div>
 			</div>
 			<?php endif; ?>
 		</form>

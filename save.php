@@ -42,13 +42,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 				$time = NULL;
 			}
 
-	 		$sql = "INSERT INTO tabs (tabnumber, tabname, userid, refreshtime)
-	 		VALUES (:tabnumber, :tabname, :userid, :refreshtime)";
+	 		$sql = "INSERT INTO tabs (tabnumber, tabname, userid, refreshtime, liststyle, listsort)
+	 		VALUES (:tabnumber, :tabname, :userid, :refreshtime, :liststyle, :listsort)";
 	 		$stmt = $pdo->prepare($sql);
 	 		$stmt->bindValue(':tabnumber', $tabNumber);
 	 		$stmt->bindValue(':tabname', $_POST['Tab'][$tabNumber-1]);
 	 		$stmt->bindValue(':userid', $_SESSION['memberID']);
 	 		$stmt->bindValue(':refreshtime', $time);
+	 		$stmt->bindValue(':liststyle', $_POST['list-styler'][$tabNumber-1]);
+	 		$stmt->bindValue(':listsort', $_POST['list-sorter'][$tabNumber-1]);
 	 		$stmt->execute();
 
 	 		for ($i=0; $i < count($_POST['Task'][$tabNumber]); $i++) {
