@@ -42,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 				$time = NULL;
 			}
 
+			print_r($_POST);
+
 	 		$sql = "INSERT INTO tabs (tabnumber, tabname, userid, refreshtime, liststyle, listsort)
 	 		VALUES (:tabnumber, :tabname, :userid, :refreshtime, :liststyle, :listsort)";
 	 		$stmt = $pdo->prepare($sql);

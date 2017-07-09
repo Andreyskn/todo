@@ -39,8 +39,8 @@ if (isset($_SESSION['memberID'])) {
 		  'tabid' => $row['tabid'],
 		  'tabname' => $row['tabname'],
 		  'refreshtime' => $row['refreshtime'],
-      'liststyle' => $row['liststyle'],
-      'listsort' => $row['listsort']
+	      'liststyle' => $row['liststyle'],
+	      'listsort' => $row['listsort']
 		);
 	}
 }
@@ -145,8 +145,8 @@ if (isset($_SESSION['memberID'])) {
 				<?php for ($i=0; $i < count($tasks); $i++): 
 						if ($i == 0 || $tasks[$i]['tabid'] != $tasks[$i - 1]['tabid']): ?>
 							<div class="<?php if ($i == 0) {echo 'show ';}?>tabContent">
-              <button type="button" class="list-styler icon-list"><input type="hidden" name="list-styler[]" value="<?php echo $tasks[$i]['liststyle']; ?>"></button>
-              <button type="button" class="list-sorter icon-down-outline"><input type="hidden" name="list-sorter[]" value="<?php echo $tasks[$i]['listsort']; ?>"></button>
+              <button type="button" class="list-styler icon-list" title="List numeration"><input type="hidden" name="list-styler[]" value="<?php echo $tasks[$i]['liststyle']; ?>"></button>
+              <button type="button" class="list-sorter icon-down-outline" title="Sort tasks by completion status"><input type="hidden" name="list-sorter[]" value="<?php echo $tasks[$i]['listsort']; ?>"></button>
 							<?php
 							echo "<ol class='list-unstyled'>";
 							$currentElmt = $i;
@@ -200,8 +200,12 @@ if (isset($_SESSION['memberID'])) {
 			</ul>
 			
 		    <div class="show tabContent">
-          <button type="button" class="list-styler icon-list"><input type="hidden" name="list-styler[]" value="0"></button>
-          <button type="button" class="list-sorter icon-down-outline"><input type="hidden" name="list-sorter[]" value="0"></button>
+      		<button type="button" class="list-styler icon-list" title="List numeration">
+      			<input type="hidden" name="list-styler[]" value="0">  
+      		</button>
+      		<button type="button" class="list-sorter icon-down-outline" title="Sort tasks by completion status">
+      			<input type="hidden" name="list-sorter[]" value="0">
+          </button>
 		    	<ol class='list-unstyled'>
 		    		<li>
               <input type='hidden' value='0' name='checkbox[1][]'>
@@ -220,8 +224,12 @@ if (isset($_SESSION['memberID'])) {
 		    </div>
 		
 			<div class="tabContent">
-        <button type="button" class="list-styler icon-list"><input type="hidden" name="list-styler[]" value="0"></button>
-        <button type="button" class="list-sorter icon-down-outline"><input type="hidden" name="list-sorter[]" value="0"></button>
+        <button type="button" class="list-styler icon-list" title="List numeration">
+          <input type="hidden" name="list-styler[]" value="0">
+        </button>
+        <button type="button" class="list-sorter icon-down-outline" title="Sort tasks by completion status">
+          <input type="hidden" name="list-sorter[]" value="0">
+        </button>
 				<ol class='list-unstyled'>
 					<li>
             <input type='hidden' value='0' name='checkbox[2][]'>
@@ -240,8 +248,12 @@ if (isset($_SESSION['memberID'])) {
 			</div>
 			
 			<div class="tabContent">
-        <button type="button" class="list-styler icon-list"><input type="hidden" name="list-styler[]" value="0"></button>
-        <button type="button" class="list-sorter icon-down-outline"><input type="hidden" name="list-sorter[]" value="0"></button>
+        <button type="button" class="list-styler icon-list" title="List numeration">
+          <input type="hidden" name="list-styler[]" value="0">
+        </button>
+        <button type="button" class="list-sorter icon-down-outline" title="Sort tasks by completion status">
+          <input type="hidden" name="list-sorter[]" value="0">
+        </button>
 				<ol class='list-unstyled'>
 					<li>
             <input type='hidden' value='0' name='checkbox[3][]'>

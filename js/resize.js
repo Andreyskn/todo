@@ -11,16 +11,3 @@ function updateTasksArray() {
 };
 
 updateTasksArray();
-
-
-
-
-// function removeScrollBar() {
-//     document.body.style.marginRight = 0;
-//     if (document.body.scrollHeight > window.innerHeight) {
-//     		scrollw = window.innerWidth - document.body.clientWidth;
-//     		document.body.style.marginRight = '-' + scrollw + 'px';
-//     }
-// }
-
-// removeScrollBar();

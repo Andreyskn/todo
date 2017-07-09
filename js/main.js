@@ -1,4 +1,3 @@
-var visibleTaskList = document.getElementsByClassName('show')[0].querySelector('ol');
 
 // клонирование первой строки
 
@@ -6,9 +5,22 @@ document.body.addEventListener("click", function(){
 	if (event.target.classList.contains("addTask")) {
 		event.preventDefault();
 		newTask();
-		event.target.scrollIntoView(false);
+    if (getDistanceFromTop(event.target) > (window.innerHeight + window.scrollY)) {
+      window.scroll(0, getDistanceFromTop(event.target) - window.innerHeight);
+    }
 	}
 });
+
+function getDistanceFromTop(element) {
+    var yPos = element.offsetHeight + 25;  // 25 - margin-bottom
+
+    while(element) {
+        yPos += (element.offsetTop);
+        element = element.offsetParent;
+    }
+
+    return yPos;
+}
 
 document.body.addEventListener("dragstart", function(){
 	if (event.target.classList.contains("nodrag")) {
@@ -44,7 +56,6 @@ document.body.addEventListener("click", function(){
 });
 
 function deleteTask() {
-  	// if (event.target.parentNode == visibleTaskList.firstElementChild && visibleTaskList.children.length == 1) {
 	if (event.target.parentNode == visibleTaskList.querySelector('li:not([class])') && visibleTaskList.querySelectorAll('li:not([class])').length == 1) {
   		event.target.parentNode.querySelector("textarea").value = '';
   		event.target.parentNode.querySelectorAll("input")[1].checked = false;
@@ -79,8 +90,15 @@ function deleteTask() {
 document.body.addEventListener("keydown", function(event) {
 	if (event.keyCode == 13) {event.preventDefault();};
 	// проверка является ли активным последний инпут при нажатии Enter
-	if (visibleTaskList.lastElementChild.querySelectorAll("textarea")[0] === document.activeElement && event.keyCode == 13) {
+	if (visibleTaskList.querySelectorAll('li')[Array.from(visibleTaskList.querySelectorAll('li'))
+      .indexOf(visibleTaskList.querySelectorAll('li:not([class])')
+        [visibleTaskList.querySelectorAll('li:not([class])').length-1])].querySelector("textarea")
+          === document.activeElement && event.keyCode == 13) 
+  {
 		newTask();
+    if (getDistanceFromTop(visibleTaskList.parentNode.querySelector('[class*=addTask]')) > (window.innerHeight + window.scrollY)) {
+      window.scroll(0, getDistanceFromTop(visibleTaskList.parentNode.querySelector('[class*=addTask]')) - window.innerHeight);
+    }
 	};
 	// проверка является ли активным любой из инпутов кроме последнего при нажатии Enter или стрелка Вниз (конвертация NodeList в  Array)
 	if (Array.from(visibleTaskList.querySelectorAll("textarea")).some(elem => elem === document.activeElement) && visibleTaskList.lastElementChild.querySelectorAll("textarea")[0] !== document.activeElement && (event.keyCode == 13 || event.keyCode == 40)) {	
@@ -104,37 +122,50 @@ document.body.addEventListener("keydown", function(event) {
 // удаление последней строки по нажатию Backspace
 
 document.body.addEventListener("keydown", function(event) {
-	if (visibleTaskList.lastElementChild.querySelectorAll("textarea")[0] === document.activeElement && visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].value === '' && event.keyCode == 8) {
-		deleteTask();
+  var NoClassTasksLength = visibleTaskList.querySelectorAll('li:not([class])').length;
+  var lastTaskNoClass = visibleTaskList.querySelectorAll('li:not([class])')[NoClassTasksLength - 1].querySelector('textarea');
+  if (lastTaskNoClass === document.activeElement && lastTaskNoClass.value === '' && event.keyCode == 8) {
+    deleteTask();
+    NoClassTasksLength = visibleTaskList.querySelectorAll('li:not([class])').length;
+    lastTaskNoClass = visibleTaskList.querySelectorAll('li:not([class])')[NoClassTasksLength - 1].querySelector('textarea');
+    lastTaskNoClass.focus();
 	}
 });
 
 // переключение фокуса на следующее текстовое поле
 
 function nextTask() {
-	var inputsArray = visibleTaskList.querySelectorAll("textarea");
-	for (i = 0; i < inputsArray.length; i++) {
-		if (inputsArray[i] === document.activeElement) {
+  var NoClassTasksArray = visibleTaskList.querySelectorAll('li:not([class])');
+	for (i = 0; i < NoClassTasksArray.length; i++) {
+		if (NoClassTasksArray[i].querySelector('textarea') === document.activeElement) {
 			var activeInput = i;
 		}
 	} 
-	inputsArray[activeInput+1].focus();
-	// установка курсора в конец строки (вариант 1)
-	inputsArray[activeInput+1].selectionStart = inputsArray[activeInput+1].selectionEnd = inputsArray[activeInput+1].value.length;
+  if (NoClassTasksArray[activeInput+1]) {
+  	NoClassTasksArray[activeInput+1].querySelector('textarea').focus();
+  	// установка курсора в конец строки (вариант 1)
+  	NoClassTasksArray[activeInput+1].querySelector('textarea').selectionStart = 
+    NoClassTasksArray[activeInput+1].querySelector('textarea').selectionEnd = 
+    NoClassTasksArray[activeInput+1].querySelector('textarea').value.length;
+  }
 };
 
 // переключение фокуса на предыдущее текстовое поле
 
 function previousTask() {
-	var inputsArray = visibleTaskList.querySelectorAll("textarea");
-	for (i = 0; i < inputsArray.length; i++) {
-		if (inputsArray[i] === document.activeElement) {
-			var activeInput = i;
-		}
-	}
-	inputsArray[activeInput-1].focus();
+	var NoClassTasksArray = visibleTaskList.querySelectorAll('li:not([class])');
+  for (i = 0; i < NoClassTasksArray.length; i++) {
+    if (NoClassTasksArray[i].querySelector('textarea') === document.activeElement) {
+      var activeInput = i;
+    }
+  } 
+  NoClassTasksArray[activeInput-1].querySelector('textarea').focus();
 	// установка курсора в конец строки (вариант 2)
-	setTimeout(function(){inputsArray[activeInput-1].setSelectionRange(inputsArray[activeInput-1].value.length, inputsArray[activeInput-1].value.length)}, 0);
+  setTimeout(function(){
+    NoClassTasksArray[activeInput-1].querySelector('textarea')
+      .setSelectionRange(NoClassTasksArray[activeInput-1].querySelector('textarea').value.length, 
+        NoClassTasksArray[activeInput-1].querySelector('textarea').value.length);
+  }, 0);	
 };
 
 // переключение вкладок
@@ -238,7 +269,13 @@ function newTab() {
 		j--;
 	}
 
+  lastTabContent.querySelector('ol').classList.add('list-unstyled');
+	lastTabContent.querySelector("input[name*=list-styler]").value = 0;
+	lastTabContent.querySelector("input[name*=list-sorter]").value = 0;
+	lastTabContent.querySelector("button[class*=list-sorter]").classList.remove('icon-up-outline', 'icon-down-outline');
+	lastTabContent.querySelector("button[class*=list-sorter]").classList.add('icon-down-outline');
 	lastTabContent.querySelector("textarea").innerHTML = ''; //очистка инпута
+  lastTabContent.querySelector("textarea").value = '';
 	lastTabContent.querySelector("textarea").style.height = 'auto';
  	lastTabContent.querySelectorAll("input")[1].checked = false; // сброс чекбокса
  	lastTabContent.querySelector("textarea").classList.remove("redline");
@@ -332,7 +369,7 @@ function renameInputs() {
 	for (i=0; i < tabContentArray.length; i++) {
 		var textInputArray = tabContentArray[i].querySelectorAll("textarea");
 		var checkboxArray = tabContentArray[i].querySelectorAll("input[type=checkbox]");
-		var hiddenInputArray = tabContentArray[i].querySelectorAll("input[type=hidden]");
+		var hiddenInputArray = tabContentArray[i].querySelectorAll("input[type=hidden][name*=checkbox]");
 		var refreshLabel = tabContentArray[i].querySelectorAll("label")[0];
 		var refreshCheckbox = tabContentArray[i].querySelectorAll("input[class=refresh]")[0];
 		var refreshTime = tabContentArray[i].querySelectorAll("input[type=time]")[0];
@@ -408,8 +445,6 @@ form.addEventListener("click", function(){
 		}
 	}
 });
-
-
 
 // изменение размера поля ввода названия вкладки в зависимости от длины содержимого
 
@@ -681,3 +716,5 @@ setTasksDragging();
 // оценить вероятность генерации неуникальной комбинации символов методом btoa(Math.floor(Math.random() * Math.pow(2, 64)))
 
 // баг при перетаскивании выделенного текста задачи
+
+// ошибка прокрутки экрана при переносе задачи
