@@ -276,8 +276,8 @@ if (isset($_SESSION['memberID'])) {
 </body>
 </html>
 
-<script src='js/slip.js'></script>
 <script src='js/dragula.js'></script>
+<script src="js/dom-autoscroller.js"></script>
 <script src="js/jquery-3.2.1.js"></script>
 <script src="js/main.js"></script>
 <script src="js/ajax.js"></script>

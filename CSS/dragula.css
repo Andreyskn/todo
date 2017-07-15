@@ -3,6 +3,16 @@
   margin: 0 !important;
   z-index: 9999 !important;
   list-style: none;
+
+}
+.gu-mirror textarea {
+  margin-left: 1px;
+}
+.gu-mirror .close {
+  margin-left: 7px;
+}
+.gu-mirror .drag {
+  margin-left: 2px;
 }
 .gu-hide {
   display: none !important;
@@ -14,7 +24,12 @@
   user-select: none !important;
 }
 .gu-transit {
-  opacity: 0.2;
+  opacity: 0;
+
+}
+
+[id*="Tab"] .gu-transit{
+  opacity: .2;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
   filter: alpha(opacity=20);
 }
