@@ -130,7 +130,7 @@ if (isset($_SESSION['memberID'])) {
 
 					<li <?php if ($i == 0) {echo 'class="active"';}?> id="Tab[<?php echo $tasks[$i]['tabid']; ?>]">
 						<a href="#" class="tab-link nodrag">
-							<input type="text" class="noclick tabName" name="Tab[]" value="<?php echo $tasks[$i]['tabname']; ?>">
+							<input type="text" class="noclick tabName" name="Tab[]" value="<?php echo htmlspecialchars($tasks[$i]['tabname'], ENT_QUOTES, 'UTF-8'); ?>">
 							<span class="closeTab">&times;</span>
 						</a>
 					</li>

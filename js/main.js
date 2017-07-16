@@ -623,48 +623,10 @@ drakeTasks.on('dragend', function(el){
     });
 });
 
-function setTasksDragging() { // баг при переносе выделенного текста
+function setTasksDragging() {
 	var taskList = document.querySelectorAll('.tabContent>ol');
 	for (i=0; i < taskList.length; i++) {
-		// new Slip(taskList[i]);
-
 		drakeTasks.containers.push(taskList[i]);
-		
-
-		// taskList[i].addEventListener('slip:beforeswipe', function(e) {
-		//     e.preventDefault(); // won't move sideways if prevented
-		// });
-
-		// taskList[i].addEventListener('slip:beforewait', function(e) {
-		// 	// if prevented element will be dragged (instead of page scrolling)	    
-		// 	if (e.target.classList.contains("drag")){
-		// 	    e.preventDefault();
-		// 	} else {
-		// 		return false;
-		// 	}
-		// });
-
-		// taskList[i].addEventListener('slip:beforereorder', function(e) {
-	 //        e.target.classList.remove('icon-hand-paper-o');
-	 //        e.target.classList.add('icon-hand-grab-o');
-	 //        form.style.cursor = 'none';
-	 //        e.target.parentNode.style.cursor = 'none';
-	 //        Array.from(e.target.parentNode.children).forEach(function(child){
-	 //        	child.style.cursor = 'none';
-	 //        });
-	 //    });
-
-		// taskList[i].addEventListener('slip:reorder', function(e) {
-		//     // e.target list item reordered.
-		//     e.target.parentNode.insertBefore(e.target, e.detail.insertBefore);
-		//     e.target.querySelector('span[class*="drag"]').classList.remove('icon-hand-grab-o');
-		//     e.target.querySelector('span[class*="drag"]').classList.add('icon-hand-paper-o');
-		//     form.style.removeProperty('cursor');
-		//     e.target.style.removeProperty('cursor');
-	 //    	Array.from(e.target.children).forEach(function(child){
-		//     	child.style.removeProperty('cursor');
-		//     });
-		// });
 	};
 };
 
