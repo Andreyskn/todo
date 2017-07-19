@@ -33,6 +33,7 @@ document.body.addEventListener("dragstart", function(){
  	var cloneTask = visibleTaskList.firstElementChild.cloneNode(true);
  	cloneTask.removeAttribute("style");
  	visibleTaskList.appendChild(cloneTask);
+ 	visibleTaskList.lastElementChild.removeAttribute('class');
  	visibleTaskList.lastElementChild.querySelector("textarea").value = ''; //очистка инпута
  	visibleTaskList.lastElementChild.querySelectorAll("input")[1].checked = false; // сброс чекбокса
  	visibleTaskList.lastElementChild.querySelector("textarea").classList.remove("redline");
@@ -45,7 +46,7 @@ document.body.addEventListener("dragstart", function(){
   	}
 
  	updateTasksArray();
- };
+ }
 
 // удаление строки
 
@@ -84,23 +85,23 @@ function deleteTask() {
     	event.target.parentNode.remove();
     }
     updateTasksArray();
-};
+}
 
 // новая строка по нажатию Enter, перемещение по строкам
 
 document.body.addEventListener("keydown", function(event) {
-	if (event.keyCode == 13) {event.preventDefault();};
+	if (event.keyCode == 13) {event.preventDefault();}
 	// проверка является ли активным последний инпут при нажатии Enter
 	if (visibleTaskList.querySelectorAll('li')[Array.from(visibleTaskList.querySelectorAll('li'))
       .indexOf(visibleTaskList.querySelectorAll('li:not([class])')
-        [visibleTaskList.querySelectorAll('li:not([class])').length-1])].querySelector("textarea")
-          === document.activeElement && event.keyCode == 13) 
+        [visibleTaskList.querySelectorAll('li:not([class])').length-1])]
+      		.querySelector("textarea") === document.activeElement && event.keyCode == 13) 
   {
 		newTask();
     if (getDistanceFromTop(visibleTaskList.parentNode.querySelector('[class*=addTask]')) > (window.innerHeight + window.scrollY)) {
       window.scroll(0, getDistanceFromTop(visibleTaskList.parentNode.querySelector('[class*=addTask]')) - window.innerHeight);
     }
-	};
+	}
 	// проверка является ли активным любой из инпутов кроме последнего при нажатии Enter или стрелка Вниз (конвертация NodeList в  Array)
 	if (Array.from(visibleTaskList.querySelectorAll("textarea")).some(elem => elem === document.activeElement) && visibleTaskList.lastElementChild.querySelectorAll("textarea")[0] !== document.activeElement && (event.keyCode == 13 || event.keyCode == 40)) {	
 		if (document.activeElement.selectionStart == document.activeElement.value.length) {
@@ -109,7 +110,7 @@ document.body.addEventListener("keydown", function(event) {
 		else {
 			return false;
 		}
-	};
+	}
 	if (Array.from(visibleTaskList.querySelectorAll("textarea")).some(elem => elem === document.activeElement) && visibleTaskList.firstElementChild.querySelectorAll("textarea")[0] !== document.activeElement && event.keyCode == 38) {
 		if (document.activeElement.selectionStart == 0) {
 			previousTask();
@@ -117,7 +118,7 @@ document.body.addEventListener("keydown", function(event) {
 		else {
 			return false;
 		}
-	};
+	}
 });
 
 // удаление последней строки по нажатию Backspace
@@ -137,9 +138,10 @@ document.body.addEventListener("keydown", function(event) {
 
 function nextTask() {
   var NoClassTasksArray = visibleTaskList.querySelectorAll('li:not([class])');
+  var activeInput;
 	for (i = 0; i < NoClassTasksArray.length; i++) {
 		if (NoClassTasksArray[i].querySelector('textarea') === document.activeElement) {
-			var activeInput = i;
+			activeInput = i;
 		}
 	} 
   if (NoClassTasksArray[activeInput+1]) {
@@ -149,25 +151,28 @@ function nextTask() {
     NoClassTasksArray[activeInput+1].querySelector('textarea').selectionEnd = 
     NoClassTasksArray[activeInput+1].querySelector('textarea').value.length;
   }
-};
+}
 
 // переключение фокуса на предыдущее текстовое поле
 
 function previousTask() {
-	var NoClassTasksArray = visibleTaskList.querySelectorAll('li:not([class])');
+  var NoClassTasksArray = visibleTaskList.querySelectorAll('li:not([class])');
+  var activeInput;
   for (i = 0; i < NoClassTasksArray.length; i++) {
     if (NoClassTasksArray[i].querySelector('textarea') === document.activeElement) {
-      var activeInput = i;
+      activeInput = i;
     }
   } 
-  NoClassTasksArray[activeInput-1].querySelector('textarea').focus();
-	// установка курсора в конец строки (вариант 2)
-  setTimeout(function(){
-    NoClassTasksArray[activeInput-1].querySelector('textarea')
-      .setSelectionRange(NoClassTasksArray[activeInput-1].querySelector('textarea').value.length, 
-        NoClassTasksArray[activeInput-1].querySelector('textarea').value.length);
-  }, 0);	
-};
+  if (NoClassTasksArray[activeInput-1]) {
+	  NoClassTasksArray[activeInput-1].querySelector('textarea').focus();
+		// установка курсора в конец строки (вариант 2)
+	  setTimeout(function(){
+	    NoClassTasksArray[activeInput-1].querySelector('textarea')
+	      .setSelectionRange(NoClassTasksArray[activeInput-1].querySelector('textarea').value.length, 
+	        NoClassTasksArray[activeInput-1].querySelector('textarea').value.length);
+	  }, 0);	
+	}
+}
 
 // переключение вкладок
 
@@ -192,7 +197,7 @@ function switchTab() {
 		prevActiveTab.removeAttribute("class");
 		event.target.parentNode.classList.add("active");
 		event.target.firstElementChild.classList.remove("noclick");
-	};
+	}
 	var activeTabNumber = parseInt(event.target.parentNode.id.match(/\d+/g), 10);
 
 	if (activeTabNumber > prevActiveTabNumber) {
@@ -203,7 +208,7 @@ function switchTab() {
 
 	showTasks(activeTabNumber, true, switchDirection);
 	updateTasksArray();
-};
+}
 
 // показ инпутов соответствующих активной вкладке 
 
@@ -228,13 +233,13 @@ function showTasks(activeTabNumber, switching, switchDirection) {
 	} else {		
 		for (i=0; i < tabContentArray.length; i++) {
 			tabContentArray[i].classList.remove("show");	
-		};
+		}
 		tabContentArray[activeTabNumber - 1].classList.add("show");
 		visibleTaskList = document.getElementsByClassName('show')[0].querySelector('ol');
 		return visibleTaskList;
 	}
 	return visibleTaskList;
-};
+}
 
 //добавление новой вкладки
 
@@ -270,21 +275,23 @@ function newTab() {
 		j--;
 	}
 
-  lastTabContent.querySelector('ol').classList.add('list-unstyled');
+	lastTabContent.querySelector('ol[class*="complete"]').remove();
+
+  	lastTabContent.querySelector('ol').classList.add('list-unstyled');
 	lastTabContent.querySelector("input[name*=list-styler]").value = 0;
 	lastTabContent.querySelector("input[name*=list-sorter]").value = 0;
 	lastTabContent.querySelector("button[class*=list-sorter]").classList.remove('icon-up-outline', 'icon-down-outline');
 	lastTabContent.querySelector("button[class*=list-sorter]").classList.add('icon-down-outline');
 	lastTabContent.querySelector("textarea").innerHTML = ''; //очистка инпута
-  lastTabContent.querySelector("textarea").value = '';
+  	lastTabContent.querySelector("textarea").value = '';
 	lastTabContent.querySelector("textarea").style.height = 'auto';
  	lastTabContent.querySelector("input[type=checkbox]").checked = false; // сброс чекбокса
  	lastTabContent.querySelector("textarea").classList.remove("redline");
  	lastTabContent.querySelector("[class=refresh]").checked = false;
  	lastTabContent.querySelector("[type=time]").value = "03:00";
  	lastTabContent.querySelector("[type=time]").setAttribute("disabled","disabled");
- 	lastTabContent.querySelector("[type=time]").style.width = "auto";
- 	lastTabContent.querySelector("[type=time]").style.opacity = ".3"
+ 	// lastTabContent.querySelector("[type=time]").style.width = "auto";
+ 	// lastTabContent.querySelector("[type=time]").style.opacity = ".3";
  	renameInputs();
 	var activeTabNumber = parseInt(tablinks[tablinks.length - 2].id.match(/\d+/g), 10);
 	showTasks(activeTabNumber);
@@ -296,7 +303,7 @@ function newTab() {
 		if (event.keyCode == 13) {
 			visibleTaskList.querySelector('textarea').focus();
 		}
-	}
+	};
 	tablinks[tablinks.length - 2].querySelector('input').addEventListener("keyup", listener);
 	
 	tablinks[tablinks.length - 2].querySelector('input').addEventListener("keydown", function(){
@@ -306,7 +313,7 @@ function newTab() {
 			}, 2000);
 		}
 	});	
-};
+}
 
 // удаление вкладки
 
@@ -330,9 +337,10 @@ function deleteTab() {
 				tablinks[j].id = 'Tab[' + (j + 1) + ']';
 			}
 			// находим activeTabNumber
+			var activeTabNumber;
 			for (i = 0; i < tablinks.length; i++) {
 				if (tablinks[i].classList.contains('active')) {
-					var activeTabNumber = i + 1;
+					activeTabNumber = i + 1;
 				}
 			}
 			showTasks(activeTabNumber);
@@ -343,10 +351,10 @@ function deleteTab() {
 		//  действия при удалении единственной вкладки
 		if (tablinks[i] == event.target.parentNode.parentNode && tablinks.length == 2) {
 			var lastTabContentTasks = document.body.getElementsByClassName('tabContent')[document.body.getElementsByClassName('tabContent').length-1].getElementsByTagName('li');
-			var j = lastTabContentTasks.length - 1;
-			while (j > 0) {
-				lastTabContentTasks[j].remove();
-				j--;
+			var n = lastTabContentTasks.length - 1;
+			while (n > 0) {
+				lastTabContentTasks[n].remove();
+				n--;
 			}
 			visibleTaskList.lastElementChild.querySelectorAll("textarea")[0].value = '';
 			visibleTaskList.lastElementChild.querySelectorAll("input")[1].checked = false;
@@ -361,7 +369,7 @@ function deleteTab() {
 	var tabNamesArray = Tabs.querySelectorAll("input[type=text]");
 	adjust(tabNamesArray, 1, 100, 300);
 	updateTasksArray();
-};
+}
 
 // установка атрибута name всех инпутов соответственно номеру вкладки
 
@@ -376,18 +384,18 @@ function renameInputs() {
 		var refreshTime = tabContentArray[i].querySelectorAll("input[type=time]")[0];
 		for (j=0; j < textInputArray.length; j++) {
 			textInputArray[j].name = "Task[" + (parseInt(i, 10) + 1) + "][]";
-		};
+		}
 		for (k=0; k < hiddenInputArray.length; k++) {
 			hiddenInputArray[k].name = "checkbox[" + (parseInt(i, 10) + 1) + "][]";
-		};
+		}
 		for (n=0; n < checkboxArray.length; n++) {
 			checkboxArray[n].name = "checkbox[" + (parseInt(i, 10) + 1) + "][]";
-		};
+		}
 		refreshLabel.setAttribute("for","daily[" + (parseInt(i, 10) + 1) + "]");
 		refreshCheckbox.name = "daily[" + (parseInt(i, 10) + 1) + "]";
 		refreshCheckbox.id = "daily[" + (parseInt(i, 10) + 1) + "]";
 		refreshTime.name = "time[" + (parseInt(i, 10) + 1) + "]";
-	};
+	}
 }
 
 
@@ -405,35 +413,36 @@ document.body.addEventListener("click", function(){
 });
 
 function strikeOut() {
+	var start;
 	if (event.target.checked == false) {
 		event.target.parentNode.getElementsByTagName('textarea')[0].classList.remove("redline");
 		if (visibleTaskList.parentNode.querySelector('ol[class*="complete"]') && event.target.parentNode.parentNode.classList.contains('complete')) {
-	  		var cloneClass = event.target.parentNode.className;
-	  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').removeAttribute('style');
-	  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').querySelector('[type="checkbox"]').checked = false;
-	  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').querySelector('textarea').classList.remove("redline");
-	  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').removeAttribute('class');
-	  		event.target.parentNode.remove();
-			var start = visibleTaskList.getElementsByTagName('li').length - visibleTaskList.querySelectorAll('[class*="redline"]').length + 1;
-	  		visibleTaskList.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', start);
-	  		updateTasksArray();
+  		var cloneClass = event.target.parentNode.className;
+  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').removeAttribute('style');
+  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').querySelector('[type="checkbox"]').checked = false;
+  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').querySelector('textarea').classList.remove("redline");
+  		visibleTaskList.querySelector('[class*="'+cloneClass+'"').removeAttribute('class');
+  		event.target.parentNode.remove();
+			start = visibleTaskList.getElementsByTagName('li').length - visibleTaskList.querySelectorAll('[class*="redline"]').length + 1;
+  		visibleTaskList.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', start);
+  		updateTasksArray();
 		}	
 	} else {
 		event.target.parentNode.getElementsByTagName('textarea')[0].classList.add("redline");
 		if (visibleTaskList.parentNode.querySelector('ol[class*="complete"]')) {
 			var linkNumber = btoa(Math.floor(Math.random() * Math.pow(2, 64)));
 			event.target.parentNode.classList.add(linkNumber);
-	  		var completeClone = event.target.parentNode.cloneNode(true);
-	  		completeClone.classList.add(linkNumber);
+  		var completeClone = event.target.parentNode.cloneNode(true);
+  		completeClone.classList.add(linkNumber);
 			Array.from(completeClone.children).forEach(e => e.removeAttribute('name'));
 			visibleTaskList.parentNode.querySelector('ol[class*="complete"]').appendChild(completeClone);
-			var start = visibleTaskList.getElementsByTagName('li').length - visibleTaskList.querySelectorAll('[class*="redline"]').length + 1;
-	  		visibleTaskList.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', start);
-	  		event.target.parentNode.style.display = 'none';
-	  		updateTasksArray();
+			start = visibleTaskList.getElementsByTagName('li').length - visibleTaskList.querySelectorAll('[class*="redline"]').length + 1;
+  		visibleTaskList.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', start);
+  		event.target.parentNode.style.display = 'none';
+  		updateTasksArray();
 		}		
-  	}
-};
+  }
+}
 
 // set refresh time
 
@@ -486,15 +495,15 @@ function adjust(elements, offset, min, max) {
                 var size = Math.max(min, Math.min(max, div.getElementsByTagName('span')[0].offsetWidth + offset));
                 if (size < max) {
 	            element.scrollLeft = 0;
-	            };
+	            }
                 // применение новой длины к исходному элементу
                 element.style.width = size + 'px';
             }, 0);
-        };
+        }
         update();
         element.onkeydown = update;
     });
-};
+}
 
 // установка значения value = placeholder всем пустым инпутам в названиях вкладок
 
@@ -519,7 +528,7 @@ adjust(Array.from(Tabs.getElementsByClassName('tabName')), 1, 100, 304);
 		if (allCheckboxes[i].getAttribute("checked") == "checked" && allCheckboxes[i].className != "refresh") {
 			allCheckboxes[i].parentNode.getElementsByTagName('textarea')[0].classList.add("redline");
 		}
-	};
+	}
 })();
 
 var drake = dragula([document.querySelector('#Tabs')], {
@@ -555,6 +564,7 @@ function renameTasksOnDrag(){
 	var tabContent = form.getElementsByClassName('tabContent');
 	var initCheckboxName = tabContent[tabInitPos-1].querySelectorAll('[name*="checkbox"]');
 	var initTaskName = tabContent[tabInitPos-1].querySelectorAll('[name*="Task"]');
+	var checkbox, checkboxName, task, taskName;
 	for (j = 0; j < initCheckboxName.length; j++) {
 		initCheckboxName[j].name = "checkbox[" + tabNewPos + "][]";
 	}
@@ -563,14 +573,14 @@ function renameTasksOnDrag(){
 	}
 	if (tabInitPos > tabNewPos) {
 		for (i = tabNewPos - 1; i < tabInitPos - 1; i++) {
-			var checkbox = tabContent[i].querySelectorAll('[name*="checkbox"]');
+			checkbox = tabContent[i].querySelectorAll('[name*="checkbox"]');
 			for (j = 0; j < checkbox.length; j++) {
-				var checkboxName = checkbox[j].name;
+				checkboxName = checkbox[j].name;
 				checkbox[j].name = "checkbox[" + (parseInt(checkboxName.match(/\d+/g), 10) + 1) + "][]";
 			}
-			var task = tabContent[i].querySelectorAll('[name*="Task"]');
+			task = tabContent[i].querySelectorAll('[name*="Task"]');
 			for (n = 0; n < task.length; n++) {
-				var taskName = task[n].name;
+				taskName = task[n].name;
 				task[n].name = "Task[" + (parseInt(taskName.match(/\d+/g), 10) + 1) + "][]";
 			}
 		}
@@ -578,21 +588,21 @@ function renameTasksOnDrag(){
 	}
 	if (tabInitPos < tabNewPos) {
 		for (i = tabInitPos; i < tabNewPos; i++) {
-			var checkbox = tabContent[i].querySelectorAll('[name*="checkbox"]');
+			checkbox = tabContent[i].querySelectorAll('[name*="checkbox"]');
 			for (j = 0; j < checkbox.length; j++) {
-				var checkboxName = checkbox[j].name;
+				checkboxName = checkbox[j].name;
 				checkbox[j].name = "checkbox[" + (parseInt(checkboxName.match(/\d+/g), 10) - 1) + "][]";
 			}
-			var task = tabContent[i].querySelectorAll('[name*="Task"]');
+			task = tabContent[i].querySelectorAll('[name*="Task"]');
 			for (n = 0; n < task.length; n++) {
-				var taskName = task[n].name;
+				taskName = task[n].name;
 				task[n].name = "Task[" + (parseInt(taskName.match(/\d+/g), 10) - 1) + "][]";
 			}
 		}
 		form.insertBefore(tabContent[tabInitPos-1], tabContent[tabNewPos]);
 	}
 	
-};
+}
 
 var drakeTasks = dragula([],{
 	direction: 'vertical',
@@ -627,8 +637,8 @@ function setTasksDragging() {
 	var taskList = document.querySelectorAll('.tabContent>ol');
 	for (i=0; i < taskList.length; i++) {
 		drakeTasks.containers.push(taskList[i]);
-	};
-};
+	}
+}
 
 document.body.addEventListener("click", function(){
 	if (event.target.classList.contains("list-styler")) {
@@ -654,14 +664,14 @@ document.body.addEventListener("click", function(){
 				event.target.parentNode.querySelector('ol[class*="complete"]').appendChild(completeClone);
 			}
 			event.target.firstElementChild.value == 1 ? e.parentNode.style.display = 'none' : e.parentNode.style.removeProperty('display');
-		})
+		});
 		var start = visibleTaskList.getElementsByTagName('li').length - visibleTaskList.querySelectorAll('[class*="redline"]').length + 1;
 		event.target.parentNode.querySelector('ol[class*="complete"]').setAttribute('start', start);
 		event.target.parentNode.querySelector('ol[class*="complete"]').addEventListener("input", function(){
 			var cloneText = event.target.value;
 			var cloneClass = event.target.parentNode.className;
 			visibleTaskList.querySelector('[class*="'+cloneClass+'"]').querySelector('textarea').value = cloneText;
-		})
+		});
 		updateTasksArray();
 		setTasksDragging();
 		if (event.target.firstElementChild.value == 0) {
@@ -700,7 +710,7 @@ function listHandler(){
 				var cloneText = event.target.value;
 				var cloneClass = event.target.parentNode.className;
 				visibleTaskList.querySelector('[class*="'+cloneClass+'"]').querySelector('textarea').value = cloneText;
-			})
+			});
 		}
 	});
 }

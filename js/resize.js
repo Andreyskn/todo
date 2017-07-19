@@ -7,7 +7,7 @@ function updateTasksArray() {
 	Array.from(document.querySelectorAll("textarea")).forEach(function(element){
 		element.style.height = (element.scrollHeight) + 'px';
 		element.oninput = resize;
-	})
-};
+	});
+}
 
 updateTasksArray();
