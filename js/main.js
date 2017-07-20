@@ -264,6 +264,8 @@ function newTab() {
 
 	var cloneTabContent = document.body.getElementsByClassName('tabContent')[0].cloneNode(true);
 	cloneTabContent.classList.remove("show");
+	cloneTabContent.querySelector('li').removeAttribute('class');
+	cloneTabContent.querySelector('li').removeAttribute('style');
 	form.appendChild(cloneTabContent);
 
 	// удаление всех инпутов, кроме первого
