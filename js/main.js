@@ -139,7 +139,7 @@ document.body.addEventListener("keydown", function(event) {
 function nextTask() {
   var NoClassTasksArray = visibleTaskList.querySelectorAll('li:not([class])');
   var activeInput;
-	for (i = 0; i < NoClassTasksArray.length; i++) {
+	for (var i = 0; i < NoClassTasksArray.length; i++) {
 		if (NoClassTasksArray[i].querySelector('textarea') === document.activeElement) {
 			activeInput = i;
 		}
@@ -158,7 +158,7 @@ function nextTask() {
 function previousTask() {
   var NoClassTasksArray = visibleTaskList.querySelectorAll('li:not([class])');
   var activeInput;
-  for (i = 0; i < NoClassTasksArray.length; i++) {
+  for (var i = 0; i < NoClassTasksArray.length; i++) {
     if (NoClassTasksArray[i].querySelector('textarea') === document.activeElement) {
       activeInput = i;
     }
@@ -231,7 +231,7 @@ function showTasks(activeTabNumber, switching, switchDirection) {
 		}, 200);
 		visibleTaskList = tabContentArray[activeTabNumber - 1].querySelector('ol');
 	} else {		
-		for (i=0; i < tabContentArray.length; i++) {
+		for (var i=0; i < tabContentArray.length; i++) {
 			tabContentArray[i].classList.remove("show");	
 		}
 		tabContentArray[activeTabNumber - 1].classList.add("show");
@@ -252,7 +252,7 @@ function newTab() {
 	cloneTab.removeAttribute("class");
 	Tabs.insertBefore(cloneTab, addTab);
 	var tablinks = Tabs.getElementsByTagName('li');
-	for (i = 0; i < tablinks.length - 2; i++) {
+	for (var i = 0; i < tablinks.length - 2; i++) {
 		tablinks[i].removeAttribute("class");
 		tablinks[i].firstElementChild.firstElementChild.classList.add("noclick");
 	}
@@ -321,6 +321,7 @@ function newTab() {
 
 function deleteTab() {
 	var tablinks = Tabs.getElementsByTagName('li');
+	var i, j;
 	for (i = 0; i < tablinks.length; i++) {
 		if (tablinks[i] == event.target.parentNode.parentNode && tablinks.length > 2) {
 			// если удаляемая вкладка активна и является последней в ряду, активной становится предпоследняя
@@ -377,6 +378,7 @@ function deleteTab() {
 
 function renameInputs() {
 	var tabContentArray = document.getElementsByClassName('tabContent');
+	var i, j, k, n;
 	for (i=0; i < tabContentArray.length; i++) {
 		var textInputArray = tabContentArray[i].querySelectorAll("textarea");
 		var checkboxArray = tabContentArray[i].querySelectorAll("input[type=checkbox]");
@@ -468,7 +470,7 @@ function adjust(elements, offset, min, max) {
     max    = max    || Infinity;
 
     var measureArray = Array.from(document.body.getElementsByClassName('measure'));
-    for (i=0; i < measureArray.length; i++) {
+    for (var i=0; i < measureArray.length; i++) {
     	measureArray[i].remove();
     }
 
@@ -511,7 +513,7 @@ function adjust(elements, offset, min, max) {
 
 function setTabNames() {
 	var tabNamesArray = Tabs.querySelectorAll("input[type=text]");
-	for (i=0; i < tabNamesArray.length; i++) {
+	for (var i=0; i < tabNamesArray.length; i++) {
 		if (tabNamesArray[i].value == '') {
 			tabNamesArray[i].value = tabNamesArray[i].getAttribute("placeholder");
 		}
@@ -526,7 +528,7 @@ adjust(Array.from(Tabs.getElementsByClassName('tabName')), 1, 100, 304);
 
 (function () {
 	var allCheckboxes = document.body.querySelectorAll("input[type=checkbox]");
-	for (i=0; i < allCheckboxes.length; i++) {
+	for (var i=0; i < allCheckboxes.length; i++) {
 		if (allCheckboxes[i].getAttribute("checked") == "checked" && allCheckboxes[i].className != "refresh") {
 			allCheckboxes[i].parentNode.getElementsByTagName('textarea')[0].classList.add("redline");
 		}
@@ -555,7 +557,7 @@ drake.on('drag', function(el){
 
 drake.on('dragend', function(el){
 	var tablinks = Tabs.getElementsByTagName('li');
-	for (j = 0; j < tablinks.length - 1; j++) {
+	for (var j = 0; j < tablinks.length - 1; j++) {
 		tablinks[j].id = 'Tab[' + (j + 1) + ']';
 	}
 	tabNewPos = parseInt(el.id.match(/\d+/g), 10);
@@ -566,7 +568,7 @@ function renameTasksOnDrag(){
 	var tabContent = form.getElementsByClassName('tabContent');
 	var initCheckboxName = tabContent[tabInitPos-1].querySelectorAll('[name*="checkbox"]');
 	var initTaskName = tabContent[tabInitPos-1].querySelectorAll('[name*="Task"]');
-	var checkbox, checkboxName, task, taskName;
+	var checkbox, checkboxName, task, taskName, i, j, n;
 	for (j = 0; j < initCheckboxName.length; j++) {
 		initCheckboxName[j].name = "checkbox[" + tabNewPos + "][]";
 	}
@@ -637,7 +639,7 @@ drakeTasks.on('dragend', function(el){
 
 function setTasksDragging() {
 	var taskList = document.querySelectorAll('.tabContent>ol');
-	for (i=0; i < taskList.length; i++) {
+	for (var i=0; i < taskList.length; i++) {
 		drakeTasks.containers.push(taskList[i]);
 	}
 }
