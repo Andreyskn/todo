@@ -49,7 +49,7 @@ if(!isset($error)){
 	    ':password' => $hashedpassword,
 	));
     $lastID = $pdo->lastInsertId();
-    $stmt = $pdo->prepare('SELECT username FROM users WHERE id = :lastID');
+    $stmt = $pdo->prepare('SELECT username, id FROM users WHERE id = :lastID');
     $stmt->bindValue(':lastID', $lastID);
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);

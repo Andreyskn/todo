@@ -276,9 +276,9 @@ function newTab() {
 		lastTabContentTasks[j].remove();
 		j--;
 	}
-
-	lastTabContent.querySelector('ol[class*="complete"]').remove();
-
+	if(lastTabContent.querySelector('ol[class*="complete"]')){
+		lastTabContent.querySelector('ol[class*="complete"]').remove();
+	}
   	lastTabContent.querySelector('ol').classList.add('list-unstyled');
 	lastTabContent.querySelector("input[name*=list-styler]").value = 0;
 	lastTabContent.querySelector("input[name*=list-sorter]").value = 0;
@@ -562,6 +562,7 @@ drake.on('dragend', function(el){
 	}
 	tabNewPos = parseInt(el.id.match(/\d+/g), 10);
 	renameTasksOnDrag();
+	renameInputs();
 });
 
 function renameTasksOnDrag(){
